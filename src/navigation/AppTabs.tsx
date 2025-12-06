@@ -15,6 +15,7 @@ import PointsHistoryScreen from '../screens/loyalty/PointsHistoryScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
 import PreferencesScreen from '../screens/profile/PreferencesScreen';
 import SettingsScreen from '../screens/profile/SettingsScreen';
+import DesignSystemPreviewScreen from '../screens/design-system/DesignSystemPreviewScreen';
 import type { NavigationParamList } from '../types/app.types';
 
 const Tab = createBottomTabNavigator();
@@ -23,11 +24,15 @@ const Stack = createNativeStackNavigator<NavigationParamList>();
 // Menu Stack
 function MenuStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
         name="Menu"
         component={MenuScreen}
-        options={{ title: 'Menu' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="ProductDetail"
@@ -107,6 +112,11 @@ function ProfileStack() {
         name="Settings"
         component={SettingsScreen}
         options={{ title: 'Settings' }}
+      />
+      <Stack.Screen
+        name="DesignSystemPreview"
+        component={DesignSystemPreviewScreen}
+        options={{ title: 'Design System Preview' }}
       />
     </Stack.Navigator>
   );

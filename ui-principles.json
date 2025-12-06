@@ -1,0 +1,689 @@
+{
+  "designSystem": {
+    "name": "Ice Cream App UI Principles",
+    "version": "1.0.0",
+    "description": "UI design principles extracted from the ice cream ordering app screens"
+  },
+  "designTokens": {
+    "spacing": {
+      "scale": {
+        "xs": "4px",
+        "sm": "8px",
+        "md": "12px",
+        "base": "16px",
+        "lg": "20px",
+        "xl": "24px",
+        "2xl": "32px",
+        "3xl": "40px",
+        "4xl": "48px"
+      },
+      "usage": {
+        "xs": "Tight spacing between related elements",
+        "sm": "Small gaps, icon padding",
+        "md": "Medium gaps, card internal spacing",
+        "base": "Standard spacing unit, default padding",
+        "lg": "Section spacing, larger gaps",
+        "xl": "Major section spacing",
+        "2xl": "Screen edge padding, large sections",
+        "3xl": "Extra large spacing between major sections",
+        "4xl": "Maximum spacing for separation"
+      },
+      "specific": {
+        "productGridGap": "12px",
+        "cardPadding": "12px",
+        "sectionSpacing": "24px",
+        "screenPadding": "16px",
+        "elementGap": "8px",
+        "cartItemSpacing": "16px",
+        "buttonPadding": "16px 24px",
+        "headerHeight": "56px",
+        "navigationBarHeight": "64px"
+      }
+    },
+    "color": {
+      "primary": {
+        "black": "#000000",
+        "white": "#FFFFFF"
+      },
+      "accent": {
+        "green": "#4ADE80",
+        "pink": "#F472B6",
+        "description": "Used sparingly for glows and highlights"
+      },
+      "background": {
+        "primary": "#FFFFFF",
+        "secondary": "#F9FAFB",
+        "card": "#FFFFFF",
+        "navigation": "#000000"
+      },
+      "text": {
+        "primary": "#000000",
+        "secondary": "#6B7280",
+        "tertiary": "#9CA3AF",
+        "inverse": "#FFFFFF",
+        "link": "#EA3886"
+      },
+      "border": {
+        "light": "#E5E7EB",
+        "medium": "#D1D5DB",
+        "dark": "#000000"
+      },
+      "shadow": {
+        "color": "rgba(0, 0, 0, 0.1)",
+        "glowGreen": "rgba(74, 222, 128, 0.2)",
+        "glowPink": "rgba(244, 114, 182, 0.2)"
+      }
+    },
+    "borderRadius": {
+      "none": "0px",
+      "sm": "4px",
+      "md": "8px",
+      "lg": "12px",
+      "xl": "16px",
+      "2xl": "20px",
+      "full": "9999px",
+      "usage": {
+        "sm": "Small buttons, badges",
+        "md": "Input fields, small cards",
+        "lg": "Product cards, medium components",
+        "xl": "Large cards, containers",
+        "2xl": "Extra rounded elements",
+        "full": "Circular images, pills, thumbnails"
+      },
+      "specific": {
+        "productCard": "12px",
+        "productImage": "12px",
+        "thumbnail": "50%",
+        "button": "8px",
+        "searchBar": "12px",
+        "filterTag": "20px",
+        "quantitySelector": "8px"
+      }
+    },
+    "typography": {
+      "fontSizes": {
+        "xs": "12px",
+        "sm": "14px",
+        "base": "16px",
+        "lg": "18px",
+        "xl": "20px",
+        "2xl": "24px",
+        "3xl": "28px",
+        "4xl": "32px"
+      },
+      "fontWeights": {
+        "regular": "400",
+        "medium": "500",
+        "semibold": "600",
+        "bold": "700"
+      },
+      "lineHeights": {
+        "tight": "1.2",
+        "normal": "1.5",
+        "relaxed": "1.75"
+      },
+      "letterSpacing": {
+        "tight": "-0.02em",
+        "normal": "0",
+        "wide": "0.02em"
+      },
+      "specific": {
+        "screenTitle": {
+          "size": "24px",
+          "weight": "700",
+          "lineHeight": "1.2"
+        },
+        "sectionHeader": {
+          "size": "20px",
+          "weight": "700",
+          "lineHeight": "1.3"
+        },
+        "productName": {
+          "size": "18px",
+          "weight": "600",
+          "lineHeight": "1.4"
+        },
+        "productDescription": {
+          "size": "14px",
+          "weight": "400",
+          "lineHeight": "1.6"
+        },
+        "price": {
+          "size": "16px",
+          "weight": "600",
+          "lineHeight": "1.5"
+        },
+        "bodyText": {
+          "size": "16px",
+          "weight": "400",
+          "lineHeight": "1.5"
+        },
+        "buttonText": {
+          "size": "16px",
+          "weight": "600",
+          "lineHeight": "1.5"
+        }
+      }
+    },
+    "shadows": {
+      "none": "none",
+      "sm": "0 1px 2px 0 rgba(0, 0, 0, 0.05)",
+      "md": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+      "lg": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      "glow": {
+        "green": "0 0 20px rgba(74, 222, 128, 0.3)",
+        "pink": "0 0 20px rgba(244, 114, 182, 0.3)"
+      },
+      "usage": {
+        "sm": "Subtle elevation, small cards",
+        "md": "Product cards, elevated elements",
+        "lg": "Modals, overlays",
+        "glow": "Product images, featured items"
+      }
+    },
+    "borders": {
+      "width": {
+        "none": "0px",
+        "thin": "1px",
+        "medium": "2px",
+        "thick": "3px"
+      },
+      "style": {
+        "solid": "solid",
+        "dashed": "dashed",
+        "dotted": "dotted"
+      },
+      "specific": {
+        "card": "1px solid #E5E7EB",
+        "input": "1px solid #D1D5DB",
+        "separator": "1px dashed #D1D5DB",
+        "none": "none"
+      }
+    },
+    "opacity": {
+      "transparent": "0",
+      "opaque": "1",
+      "disabled": "0.5",
+      "hover": "0.8",
+      "overlay": "0.4"
+    },
+    "sizing": {
+      "touchTarget": {
+        "minimum": "44px",
+        "recommended": "48px",
+        "description": "Minimum touch target size for accessibility"
+      },
+      "icons": {
+        "sm": "16px",
+        "md": "20px",
+        "lg": "24px",
+        "xl": "32px"
+      },
+      "images": {
+        "thumbnail": "48px",
+        "productCard": "160px",
+        "productDetail": "300px",
+        "aspectRatio": {
+          "square": "1:1",
+          "card": "4:3",
+          "banner": "16:9"
+        }
+      }
+    }
+  },
+  "colorPalette": {
+    "primary": {
+      "black": "#000000",
+      "white": "#FFFFFF",
+      "description": "Primary color scheme uses high contrast black and white for maximum readability"
+    },
+    "accent": {
+      "green": "#4ADE80",
+      "pink": "#F472B6",
+      "description": "Minimal use of accent colors for visual interest without overwhelming"
+    },
+    "background": {
+      "primary": "#FFFFFF",
+      "description": "Clean white background throughout the app"
+    },
+    "text": {
+      "primary": "#000000",
+      "description": "Black text on white background for optimal contrast"
+    }
+  },
+  "typography": {
+    "hierarchy": {
+      "title": {
+        "size": "24px",
+        "weight": "700",
+        "lineHeight": "1.2",
+        "usage": "Screen titles, section headers",
+        "token": "designTokens.typography.specific.screenTitle"
+      },
+      "subtitle": {
+        "size": "18px",
+        "weight": "600",
+        "lineHeight": "1.4",
+        "usage": "Product names, category names",
+        "token": "designTokens.typography.specific.productName"
+      },
+      "body": {
+        "size": "16px",
+        "weight": "400",
+        "lineHeight": "1.5",
+        "usage": "Descriptions, prices, general text",
+        "token": "designTokens.typography.specific.bodyText"
+      },
+      "price": {
+        "size": "16px",
+        "weight": "600",
+        "lineHeight": "1.5",
+        "usage": "Price displays",
+        "token": "designTokens.typography.specific.price"
+      }
+    },
+    "principles": [
+      "Clear visual hierarchy",
+      "Consistent font sizes across similar elements",
+      "Readable font weights",
+      "Adequate line spacing"
+    ]
+  },
+  "layout": {
+    "gridSystem": {
+      "productGrid": {
+        "columns": 2,
+        "gap": "12px",
+        "padding": "16px",
+        "description": "Two-column grid for product listings",
+        "token": "designTokens.spacing.specific.productGridGap"
+      },
+      "cartList": {
+        "layout": "Single column",
+        "gap": "16px",
+        "padding": "16px",
+        "description": "Vertical list layout for cart items",
+        "token": "designTokens.spacing.specific.cartItemSpacing"
+      }
+    },
+    "spacing": {
+      "principle": "Use spacing scale consistently",
+      "scale": "See designTokens.spacing.scale",
+      "sections": "24px between major sections",
+      "cards": "12px internal padding",
+      "elements": "8px-16px between related elements",
+      "screenPadding": "16px horizontal padding"
+    },
+    "alignment": {
+      "principle": "Left-aligned text, centered headers",
+      "cards": "Aligned to grid",
+      "buttons": "Full-width or centered"
+    }
+  },
+  "components": {
+    "header": {
+      "style": "Minimal, clean",
+      "elements": [
+        "Back arrow (left, 20px icon)",
+        "Title (center, 20px font, 700 weight)",
+        "Action icon (right - menu, profile, etc., 20px)"
+      ],
+      "height": "56px",
+      "padding": "12px 16px",
+      "background": "#FFFFFF",
+      "borderBottom": "none or 1px solid #E5E7EB"
+    },
+    "searchBar": {
+      "style": "Rounded, minimal border",
+      "elements": [
+        "Placeholder text: 'Search your item'",
+        "Magnifying glass icon (right)",
+        "Filter button (adjacent, square with icon)"
+      ],
+      "background": "#FFFFFF",
+      "border": "1px solid #E5E7EB",
+      "borderRadius": "12px",
+      "padding": "12px 16px",
+      "height": "44px"
+    },
+    "filterTags": {
+      "style": "Horizontal scrollable tags",
+      "layout": "Horizontal scroll",
+      "sectionTitle": "'Discover food'",
+      "tags": [
+        "Rounded corners (20px)",
+        "Text with 'X' close indicator",
+        "Scrollable horizontally",
+        "Padding: 8px 16px",
+        "Margin: 0 8px 0 0"
+      ],
+      "borderRadius": "20px",
+      "padding": "8px 16px",
+      "gap": "8px"
+    },
+    "productCard": {
+      "style": "Card-based design",
+      "elements": [
+        "Product image (top)",
+        "Product name (below image)",
+        "Price: 'Starting From $X'",
+        "Optional: Star rating"
+      ],
+      "layout": {
+        "image": "Rounded corners (12px), full width",
+        "text": "Centered or left-aligned below image",
+        "spacing": "12px padding"
+      },
+      "borderRadius": "12px",
+      "padding": "12px",
+      "gap": "8px",
+      "shadow": "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+      "interaction": "Tappable entire card"
+    },
+    "productDetail": {
+      "image": {
+        "size": "300px",
+        "style": "Rounded corners (12px)",
+        "borderRadius": "12px",
+        "effects": "Subtle glow/shadow",
+        "shadow": "0 0 20px rgba(74, 222, 128, 0.3)",
+        "overlay": "Heart icon (favorite) in top-right",
+        "padding": "16px"
+      },
+      "quantitySelector": {
+        "style": "Minus, number, plus",
+        "layout": "Horizontal",
+        "borderRadius": "8px",
+        "padding": "8px 12px",
+        "gap": "12px",
+        "minWidth": "120px"
+      },
+      "priceDisplay": {
+        "label": "'Total Price'",
+        "value": "Prominent display",
+        "fontSize": "18px",
+        "fontWeight": "600",
+        "position": "Next to quantity selector",
+        "gap": "16px"
+      },
+      "productInfo": {
+        "name": {
+          "fontSize": "20px",
+          "fontWeight": "700",
+          "lineHeight": "1.3"
+        },
+        "rating": "Star icon with number",
+        "description": {
+          "fontSize": "14px",
+          "fontWeight": "400",
+          "lineHeight": "1.6",
+          "color": "#6B7280"
+        },
+        "spacing": "16px"
+      },
+      "addToCartButton": {
+        "style": "Full-width, black background, white text",
+        "background": "#000000",
+        "color": "#FFFFFF",
+        "borderRadius": "8px",
+        "padding": "16px 24px",
+        "height": "56px",
+        "icon": "Plus icon on right (24px)",
+        "position": "Bottom of screen",
+        "margin": "16px"
+      }
+    },
+    "cartItem": {
+      "layout": "Horizontal row",
+      "elements": [
+        "Circular thumbnail image (left, 48px)",
+        "Product name and price (center)",
+        "Quantity selector (right)"
+      ],
+      "spacing": "16px horizontal",
+      "padding": "12px 0",
+      "gap": "12px"
+    },
+    "quantitySelector": {
+      "style": "Minus, number, plus buttons",
+      "layout": "Horizontal",
+      "borderRadius": "8px",
+      "padding": "6px 10px",
+      "gap": "8px",
+      "minWidth": "100px",
+      "height": "36px"
+    },
+    "button": {
+      "primary": {
+        "style": "Black background, white text",
+        "background": "#000000",
+        "color": "#FFFFFF",
+        "borderRadius": "8px",
+        "padding": "16px 24px",
+        "minHeight": "48px",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "icons": "White icons on right (20px)",
+        "examples": ["Add to Cart", "Checkout"]
+      },
+      "secondary": {
+        "style": "Minimal, outlined or text-only",
+        "background": "transparent",
+        "color": "#000000",
+        "border": "1px solid #000000",
+        "borderRadius": "8px",
+        "padding": "12px 20px",
+        "usage": "Less prominent actions"
+      }
+    },
+    "rating": {
+      "style": "Star icon with numeric value",
+      "format": "X.X (e.g., 4.5, 5.0)",
+      "position": "Below product name or integrated"
+    },
+    "sectionHeader": {
+      "style": "Bold, clear title",
+      "fontSize": "20px",
+      "fontWeight": "700",
+      "lineHeight": "1.3",
+      "color": "#000000",
+      "marginTop": "24px",
+      "marginBottom": "16px",
+      "paddingHorizontal": "16px",
+      "examples": ["We Recommend", "Discover food", "My Cart List"]
+    },
+    "promoCode": {
+      "style": "Section with icon and question text",
+      "text": "'Do You have any promo code?'",
+      "icon": "Percentage icon"
+    },
+    "orderSummary": {
+      "style": "List format with dashed separator",
+      "elements": [
+        "Subtotal",
+        "Total"
+      ],
+      "separator": {
+        "style": "dashed",
+        "width": "1px",
+        "color": "#D1D5DB",
+        "margin": "16px 0"
+      },
+      "padding": "16px",
+      "fontSize": "16px",
+      "fontWeight": {
+        "label": "400",
+        "value": "600"
+      },
+      "spacing": "12px between items"
+    },
+    "navigationBar": {
+      "style": "Black background, white icons",
+      "background": "#000000",
+      "position": "Bottom of screen",
+      "height": "64px",
+      "padding": "8px 0",
+      "icons": [
+        "Home (house) - 24px",
+        "Chat (bubble) - 24px",
+        "Cart (shopping bag) - 24px",
+        "Profile (person) - 24px"
+      ],
+      "iconColor": "#FFFFFF",
+      "activeState": {
+        "color": "#FFFFFF",
+        "opacity": "1.0"
+      },
+      "inactiveState": {
+        "color": "#FFFFFF",
+        "opacity": "0.6"
+      },
+      "gap": "Equal spacing between icons"
+    }
+  },
+  "visualElements": {
+    "images": {
+      "productImages": {
+        "style": "Rounded corners",
+        "borderRadius": "12px",
+        "aspectRatio": "1:1 (square)",
+        "width": "100%",
+        "height": "160px",
+        "objectFit": "cover",
+        "quality": "High resolution"
+      },
+      "thumbnails": {
+        "style": "Circular",
+        "borderRadius": "50%",
+        "size": "48px",
+        "width": "48px",
+        "height": "48px",
+        "usage": "Cart items"
+      }
+    },
+    "icons": {
+      "style": "Minimal, line-style",
+      "color": {
+        "default": "#000000",
+        "inverse": "#FFFFFF",
+        "description": "Black on white backgrounds, white on black backgrounds"
+      },
+      "sizes": {
+        "sm": "16px",
+        "md": "20px",
+        "lg": "24px",
+        "xl": "32px"
+      },
+      "types": [
+        "Magnifying glass (search) - 20px",
+        "Filter (two lines with circles) - 20px",
+        "Heart (favorite) - 24px",
+        "Arrow (navigation) - 20px",
+        "Three dots (menu) - 20px",
+        "Star (rating) - 16px",
+        "Percentage (promo) - 20px",
+        "Plus/Minus (quantity) - 20px"
+      ]
+    },
+    "shadows": {
+      "usage": "Subtle, minimal",
+      "cards": {
+        "value": "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
+        "description": "Light shadow for depth"
+      },
+      "images": {
+        "value": "0 0 20px rgba(74, 222, 128, 0.3)",
+        "description": "Subtle glow effects on product images"
+      },
+      "elevated": {
+        "value": "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+        "description": "For modals and overlays"
+      }
+    },
+    "borders": {
+      "style": "Minimal or none",
+      "cards": {
+        "value": "1px solid #E5E7EB",
+        "usage": "Optional subtle border on cards"
+      },
+      "inputs": {
+        "value": "1px solid #D1D5DB",
+        "usage": "Input fields, search bars"
+      },
+      "separators": {
+        "value": "1px dashed #D1D5DB",
+        "usage": "Section separators, order summary"
+      },
+      "none": "Most cards have no visible border"
+    }
+  },
+  "interaction": {
+    "principles": [
+      "Clear visual feedback on interactions",
+      "Large touch targets",
+      "Intuitive gestures",
+      "Smooth transitions"
+    ],
+    "states": {
+      "active": "Highlighted navigation item",
+      "hover": "Subtle elevation on cards",
+      "pressed": "Visual feedback on buttons"
+    },
+    "animations": {
+      "style": "Subtle, smooth",
+      "transitions": "Gentle animations between screens"
+    }
+  },
+  "patterns": {
+    "cardBasedDesign": {
+      "description": "All content organized in cards",
+      "usage": "Products, sections, information blocks"
+    },
+    "horizontalScrolling": {
+      "description": "Filter tags scroll horizontally",
+      "usage": "Categories, filters"
+    },
+    "twoColumnGrid": {
+      "description": "Products displayed in two columns",
+      "usage": "Product listings, recommendations"
+    },
+    "bottomNavigation": {
+      "description": "Primary navigation at bottom",
+      "usage": "Main app navigation"
+    },
+    "fullWidthButtons": {
+      "description": "Primary actions use full-width buttons",
+      "usage": "Add to cart, checkout"
+    }
+  },
+  "accessibility": {
+    "principles": [
+      "High contrast (black on white)",
+      "Clear labels and text",
+      "Adequate touch target sizes",
+      "Readable font sizes",
+      "Icon + text combinations where appropriate"
+    ]
+  },
+  "responsive": {
+    "principles": [
+      "Consistent spacing across screen sizes",
+      "Scalable images",
+      "Flexible grid system",
+      "Touch-friendly element sizes"
+    ]
+  },
+  "bestPractices": [
+    "Minimal color palette for clean aesthetic",
+    "Consistent spacing and padding",
+    "Clear visual hierarchy",
+    "Card-based organization",
+    "Prominent call-to-action buttons",
+    "Intuitive navigation patterns",
+    "Clean, uncluttered layouts",
+    "Consistent iconography",
+    "Readable typography",
+    "Adequate white space"
+  ]
+}
+

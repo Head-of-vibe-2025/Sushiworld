@@ -1,8 +1,73 @@
-# OSX
+# Dependencies
+node_modules/
+vendor/
+.pnp
+.pnp.js
+
+# Environment variables and secrets
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+*.pem
+*.key
+*.cert
+secrets/
+
+# Build output
+build/
+dist/
+.next/
+out/
+.expo/
+web-build/
+*.ipa
+*.apk
+*.aab
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 .DS_Store
+Thumbs.db
+
+# OS files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Desktop.ini
+
+# Logs and cache
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+.cache/
+.parcel-cache/
+.npm/
+.eslintcache
+.stylelintcache
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+.jest/
+
+# TypeScript
+*.tsbuildinfo
+.tsbuildinfo
 
 # Xcode
-build/
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -11,19 +76,18 @@ build/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-xcuserdata
+xcuserdata/
 *.xccheckout
 *.moved-aside
-DerivedData
+DerivedData/
 *.hmap
-*.ipa
 *.xcuserstate
-project.xcworkspace
+project.xcworkspace/
+*.xcworkspace
+!default.xcworkspace
 
 # Android/IntelliJ
-build/
-.idea
-.gradle
+.gradle/
 local.properties
 *.iml
 *.hprof
@@ -31,23 +95,19 @@ local.properties
 *.keystore
 !debug.keystore
 
-# node.js
-node_modules/
-npm-debug.log
-yarn-error.log
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
 
-# Expo
-.expo/
-dist/
-web-build/
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
 
-# Environment variables
-.env
-.env.local
-
-# TypeScript
-*.tsbuildinfo
-
-# Misc
-*.log
+# Allow .env.example to be committed (it's a template)
+!.env.example
 

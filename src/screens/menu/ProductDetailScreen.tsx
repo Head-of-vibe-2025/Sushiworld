@@ -8,6 +8,7 @@ import { RouteProp } from '@react-navigation/native';
 import { useCart } from '../../context/CartContext';
 import { useMenuItem } from '../../hooks/useFoxyProducts';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { Button } from '../../components/design-system';
 import { formatPrice } from '../../utils/formatting';
 import type { NavigationParamList } from '../../types/app.types';
 
@@ -48,12 +49,11 @@ export default function ProductDetailScreen() {
       <View style={styles.centerContainer}>
         <Text style={styles.errorText}>Failed to load product</Text>
         <Text style={styles.errorSubtext}>{error?.message || 'Product not found'}</Text>
-        <TouchableOpacity
-          style={styles.backButton}
+        <Button
+          title="Go Back"
           onPress={() => navigation.goBack()}
-        >
-          <Text style={styles.backButtonText}>Go Back</Text>
-        </TouchableOpacity>
+          variant="secondary"
+        />
       </View>
     );
   }
@@ -69,9 +69,13 @@ export default function ProductDetailScreen() {
         {product.description && (
           <Text style={styles.description}>{product.description}</Text>
         )}
-        <TouchableOpacity style={styles.addButton} onPress={handleAddToCart}>
-          <Text style={styles.addButtonText}>Add to Cart</Text>
-        </TouchableOpacity>
+        <Button
+          title="Add to Cart"
+          onPress={handleAddToCart}
+          variant="primary"
+          fullWidth
+          size="large"
+        />
       </View>
     </ScrollView>
   );
@@ -114,17 +118,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     lineHeight: 24,
   },
-  addButton: {
-    backgroundColor: '#FF6B6B',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  addButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   errorText: {
     fontSize: 18,
     fontWeight: '600',
@@ -137,17 +130,6 @@ const styles = StyleSheet.create({
     color: '#666',
     marginBottom: 20,
     textAlign: 'center',
-  },
-  backButton: {
-    backgroundColor: '#f8f8f8',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 8,
-  },
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
   },
 });
 

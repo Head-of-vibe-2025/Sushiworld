@@ -2,6 +2,10 @@
 
 Mobile ordering app for Sushi World restaurant chain (Belgium).
 
+**Client:** Sushi World  
+**Agency:** Head of Vibe 2025  
+**Project Type:** Mobile Application (React Native/Expo)
+
 ## 🚀 Getting Started
 
 ### Prerequisites
@@ -111,6 +115,78 @@ eas build --platform android
 
 See project specification document for detailed architecture and implementation details.
 
+## 👥 Collaboration & Development Workflow
+
+This project is managed by **Head of Vibe 2025** agency. We use a collaborative workflow with code reviews.
+
+### Starting New Work
+
+```bash
+# Always start from the latest main branch
+git checkout main
+git pull origin main
+
+# Create a new feature branch
+git checkout -b feature/what-im-building
+# or
+git checkout -b fix/bug-description
+```
+
+### Commit Message Convention
+
+We follow conventional commits:
+
+- `feat:` - New features
+- `fix:` - Bug fixes
+- `style:` - CSS/UI changes (formatting, missing semi colons, etc.)
+- `refactor:` - Code improvements without changing functionality
+- `docs:` - Documentation updates
+- `test:` - Adding or updating tests
+- `chore:` - Config/setup changes, dependency updates
+- `perf:` - Performance improvements
+
+**Example:**
+```bash
+git commit -m "feat: add loyalty points redemption screen"
+git commit -m "fix: resolve cart total calculation error"
+git commit -m "style: update button colors to match design system"
+```
+
+### Creating a Pull Request
+
+1. **Push your branch:**
+   ```bash
+   git add .
+   git commit -m "feat: describe what you did"
+   git push origin feature/your-branch-name
+   ```
+
+2. **Create Pull Request on GitHub:**
+   - Go to the repository on GitHub
+   - Click "New Pull Request"
+   - Select your branch to merge into `main`
+   - Fill out the PR template
+   - Assign your partner as a reviewer
+   - Wait for approval before merging
+
+3. **After Approval:**
+   - Merge the PR (squash and merge recommended)
+   - Delete the feature branch
+   - Pull the latest `main` locally:
+     ```bash
+     git checkout main
+     git pull origin main
+     ```
+
+### Branch Protection
+
+The `main` branch is protected and requires:
+- ✅ Pull request before merging
+- ✅ At least 1 approval from a team member
+- ✅ Passing CI/CD checks
+
+This ensures code quality and collaboration.
+
 ## 🔐 Security Notes
 
 - Never commit `.env` file
@@ -119,5 +195,10 @@ See project specification document for detailed architecture and implementation 
 
 ## 📄 License
 
-Private - Sushi World
+Private - Sushi World / Head of Vibe 2025
+
+## 📞 Contact
+
+**Agency:** Head of Vibe 2025  
+**Organization:** [Head-of-vibe-2025](https://github.com/Head-of-vibe-2025)
 

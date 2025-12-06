@@ -1,20 +1,26 @@
 // Root Navigator
 
 import React from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { View, ActivityIndicator, StyleSheet, Image } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useAuth } from '../context/AuthContext';
 import AuthStack from './AuthStack';
 import AppTabs from './AppTabs';
 import type { NavigationParamList } from '../types/app.types';
+import { LOGO_URL } from '../utils/constants';
 
 const Stack = createNativeStackNavigator<NavigationParamList>();
 
 function LoadingScreen() {
   return (
     <View style={styles.loadingContainer}>
-      <ActivityIndicator size="large" color="#FF6B6B" />
+      <Image
+        source={{ uri: LOGO_URL }}
+        style={styles.logo}
+        resizeMode="contain"
+      />
+      <ActivityIndicator size="large" color="#FF6B6B" style={styles.spinner} />
     </View>
   );
 }
@@ -44,6 +50,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#fff',
+  },
+  logo: {
+    width: 120,
+    height: 120,
+    marginBottom: 24,
+  },
+  spinner: {
+    marginTop: 16,
   },
 });
 

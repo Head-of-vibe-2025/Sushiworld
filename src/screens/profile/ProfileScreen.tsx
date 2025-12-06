@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
 import { useRegion } from '../../context/RegionContext';
+import { Button } from '../../components/design-system';
 import type { NavigationParamList } from '../../types/app.types';
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Profile'>;
@@ -45,9 +46,13 @@ export default function ProfileScreen() {
       </TouchableOpacity>
 
       {user && (
-        <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-          <Text style={styles.signOutText}>Sign Out</Text>
-        </TouchableOpacity>
+        <Button
+          title="Sign Out"
+          onPress={handleSignOut}
+          variant="secondary"
+          fullWidth
+          style={styles.signOutButton}
+        />
       )}
     </View>
   );
@@ -91,13 +96,6 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     marginTop: 30,
-    padding: 15,
-    alignItems: 'center',
-  },
-  signOutText: {
-    color: '#FF6B6B',
-    fontSize: 16,
-    fontWeight: '600',
   },
 });
 

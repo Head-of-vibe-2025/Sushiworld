@@ -1,16 +1,20 @@
 // Menu Screen - Modern UI Design
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCart } from '../../context/CartContext';
 import { useRegion } from '../../context/RegionContext';
 import { useMenuItems, useCategories } from '../../hooks/useFoxyProducts';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import { SearchBar } from '../../components/design-system';
 import { formatPrice } from '../../utils/formatting';
+import { spacing } from '../../theme/designTokens';
 import type { NavigationParamList } from '../../types/app.types';
 import type { WebflowMenuItem } from '../../types/webflow.types';
+
+import { LOGO_URL } from '../../utils/constants';
 
 type MenuScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Menu'>;
 
@@ -142,9 +146,30 @@ export default function MenuScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.topBar}>
-        <View style={styles.topBarContent}>
-          <Text style={styles.headerTitle}>Menu ✨</Text>
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <View style={styles.leftSection}>
+            <TouchableOpacity
+              style={styles.menuIconButton}
+              onPress={() => {}}
+            >
+              <View style={styles.menuIconGrid}>
+                <View style={styles.menuIconDot} />
+                <View style={styles.menuIconDot} />
+                <View style={styles.menuIconDot} />
+                <View style={styles.menuIconDot} />
+              </View>
+            </TouchableOpacity>
+            <Image
+              source={{ uri: LOGO_URL }}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+          <View style={styles.titleContainer}>
+            <Text style={styles.titleLine1}>Sushi lover?</Text>
+            <Text style={styles.titleLine2}>Order and eat!</Text>
+          </View>
           <TouchableOpacity
             style={styles.cartIconButton}
             onPress={() => navigation.navigate('Cart')}
@@ -157,23 +182,13 @@ export default function MenuScreen() {
             <Text style={styles.cartIcon}>🛒</Text>
           </TouchableOpacity>
         </View>
-      </View>
-
-      <View style={styles.searchContainer}>
-        <View style={styles.searchBar}>
-          <Text style={styles.searchIcon}>🔍</Text>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search your item"
-            placeholderTextColor="#999"
+        <View style={styles.searchContainer}>
+          <SearchBar
             value={searchQuery}
             onChangeText={setSearchQuery}
+            placeholder="Search your item"
+            onFilterPress={() => {}}
           />
-          {searchQuery.length > 0 && (
-            <TouchableOpacity onPress={() => setSearchQuery('')}>
-              <Text style={styles.clearIcon}>✕</Text>
-            </TouchableOpacity>
-          )}
         </View>
       </View>
 
@@ -211,35 +226,73 @@ export default function MenuScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
-  topBar: {
+  header: {
     paddingTop: 50,
-    paddingHorizontal: 20,
-    paddingBottom: 16,
-    backgroundColor: '#fff',
+    paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.base,
+    backgroundColor: '#FFFFFF',
   },
-  topBarContent: {
+  headerTop: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: spacing.base,
   },
-  headerTitle: {
+  leftSection: {
+    alignItems: 'flex-start',
+    marginRight: spacing.md,
+  },
+  menuIconButton: {
+    padding: 8,
+    marginBottom: 8,
+  },
+  menuIconGrid: {
+    width: 24,
+    height: 24,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  menuIconDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: '#000',
+  },
+  logo: {
+    width: 80,
+    height: 30,
+  },
+  titleContainer: {
+    flex: 1,
+    alignItems: 'flex-start',
+  },
+  titleLine1: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#1a1a1a',
+    color: '#000',
     letterSpacing: -0.5,
-    // Modern UI - Updated 2024
+    marginBottom: 2,
+  },
+  titleLine2: {
+    fontSize: 24,
+    fontWeight: '700',
+    color: '#000',
+    letterSpacing: -0.5,
   },
   cartIconButton: {
     position: 'relative',
     padding: 8,
+    marginLeft: spacing.md,
   },
   cartIcon: {
     fontSize: 24,
@@ -263,40 +316,11 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   searchContainer: {
-    paddingHorizontal: 20,
-    paddingBottom: 16,
-    backgroundColor: '#fff',
-  },
-  searchBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
-  },
-  searchIcon: {
-    fontSize: 18,
-    marginRight: 12,
-  },
-  searchInput: {
-    flex: 1,
-    fontSize: 16,
-    color: '#1a1a1a',
-    padding: 0,
-  },
-  clearIcon: {
-    fontSize: 18,
-    color: '#999',
-    padding: 4,
+    marginTop: 0,
   },
   categoryContainer: {
     paddingVertical: 12,
-    backgroundColor: '#fff',
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
+    backgroundColor: '#FFFFFF',
   },
   categoryList: {
     paddingHorizontal: 15,
@@ -327,7 +351,7 @@ const styles = StyleSheet.create({
   list: {
     paddingTop: 20,
     paddingBottom: 100,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFFFF',
   },
   menuCard: {
     backgroundColor: '#fff',

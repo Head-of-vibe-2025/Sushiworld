@@ -36,5 +36,6 @@ export interface NavigationParamList {
   Login: undefined;
   Signup: undefined;
   GuestCheckout: undefined;
+  DesignSystemPreview: undefined;
 }
 

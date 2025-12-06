@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
+import { Button } from '../../components/design-system';
 import { formatPoints, pointsToEuros } from '../../utils/formatting';
 import { LOYALTY_CONFIG } from '../../utils/constants';
 import QRCode from 'react-native-qrcode-svg';
@@ -53,22 +54,23 @@ export default function LoyaltyScreen() {
         </View>
       </View>
 
-      <TouchableOpacity
-        style={[styles.redeemButton, !canRedeem && styles.redeemButtonDisabled]}
+      <Button
+        title={canRedeem ? 'Redeem Points' : `Need ${LOYALTY_CONFIG.MIN_REDEMPTION_POINTS - points} more points`}
         onPress={() => navigation.navigate('RedeemPoints')}
+        variant="primary"
         disabled={!canRedeem}
-      >
-        <Text style={styles.redeemButtonText}>
-          {canRedeem ? 'Redeem Points' : `Need ${LOYALTY_CONFIG.MIN_REDEMPTION_POINTS - points} more points`}
-        </Text>
-      </TouchableOpacity>
+        fullWidth
+        size="large"
+        style={styles.redeemButton}
+      />
 
-      <TouchableOpacity
-        style={styles.historyButton}
+      <Button
+        title="View Points History"
         onPress={() => navigation.navigate('PointsHistory')}
-      >
-        <Text style={styles.historyButtonText}>View Points History</Text>
-      </TouchableOpacity>
+        variant="secondary"
+        fullWidth
+        style={styles.historyButton}
+      />
     </View>
   );
 }
@@ -141,27 +143,10 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   redeemButton: {
-    backgroundColor: '#4ECDC4',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
     marginBottom: 15,
   },
-  redeemButtonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  redeemButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   historyButton: {
-    padding: 15,
-    alignItems: 'center',
-  },
-  historyButtonText: {
-    color: '#FF6B6B',
-    fontSize: 16,
+    marginTop: 0,
   },
 });
 

@@ -5,6 +5,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { authService } from '../../services/supabase/authService';
+import { Button } from '../../components/design-system';
 import type { NavigationParamList } from '../../types/app.types';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Login'>;
@@ -50,13 +51,15 @@ export default function LoginScreen() {
         onChangeText={setPassword}
         secureTextEntry
       />
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
+      <Button
+        title={loading ? 'Signing in...' : 'Sign In'}
         onPress={handleLogin}
+        variant="primary"
+        loading={loading}
         disabled={loading}
-      >
-        <Text style={styles.buttonText}>{loading ? 'Signing in...' : 'Sign In'}</Text>
-      </TouchableOpacity>
+        fullWidth
+        style={styles.button}
+      />
       <TouchableOpacity
         onPress={() => navigation.navigate('Signup')}
         style={styles.linkButton}
@@ -89,26 +92,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    backgroundColor: '#FF6B6B',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
     marginTop: 10,
-  },
-  buttonDisabled: {
-    opacity: 0.5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
   },
   linkButton: {
     marginTop: 20,
     alignItems: 'center',
   },
   linkText: {
-    color: '#FF6B6B',
+    color: '#EA3886',
     fontSize: 14,
   },
 });

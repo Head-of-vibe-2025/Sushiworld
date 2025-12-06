@@ -5,6 +5,7 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCart } from '../../context/CartContext';
+import { Button } from '../../components/design-system';
 import { formatPrice } from '../../utils/formatting';
 import type { NavigationParamList } from '../../types/app.types';
 
@@ -59,12 +60,13 @@ export default function CartScreen() {
           <Text style={styles.totalLabel}>Total:</Text>
           <Text style={styles.totalAmount}>{formatPrice(getTotal())}</Text>
         </View>
-        <TouchableOpacity
-          style={styles.checkoutButton}
+        <Button
+          title="Proceed to Checkout"
           onPress={() => navigation.navigate('Checkout')}
-        >
-          <Text style={styles.checkoutButtonText}>Proceed to Checkout</Text>
-        </TouchableOpacity>
+          variant="primary"
+          fullWidth
+          size="large"
+        />
       </View>
     </View>
   );
@@ -137,17 +139,6 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     color: '#FF6B6B',
-  },
-  checkoutButton: {
-    backgroundColor: '#FF6B6B',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  checkoutButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
   emptyContainer: {
     flex: 1,

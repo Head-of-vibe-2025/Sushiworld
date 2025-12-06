@@ -1,8 +1,9 @@
 // Preferences Screen
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
+import { Button } from '../../components/design-system';
 
 export default function PreferencesScreen() {
   const { user } = useAuth();
@@ -43,9 +44,13 @@ export default function PreferencesScreen() {
         />
       </View>
 
-      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
-        <Text style={styles.saveButtonText}>Save Preferences</Text>
-      </TouchableOpacity>
+      <Button
+        title="Save Preferences"
+        onPress={handleSave}
+        variant="primary"
+        fullWidth
+        size="large"
+      />
     </ScrollView>
   );
 }
@@ -72,18 +77,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     minHeight: 100,
     textAlignVertical: 'top',
-  },
-  saveButton: {
-    backgroundColor: '#FF6B6B',
-    padding: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
   },
 });
 

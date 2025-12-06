@@ -3,14 +3,33 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
-if (!process.env.EXPO_PUBLIC_SUPABASE_URL || !process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY) {
-  console.warn('⚠️ Supabase credentials not configured. Please set EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY in .env file');
+// Validate required environment variables
+if (!supabaseUrl || !supabaseAnonKey) {
+  const missing = [];
+  if (!supabaseUrl) missing.push('EXPO_PUBLIC_SUPABASE_URL');
+  if (!supabaseAnonKey) missing.push('EXPO_PUBLIC_SUPABASE_ANON_KEY');
+  
+  const errorMsg = `❌ Missing required environment variables: ${missing.join(', ')}\n` +
+    `Please set these in your .env file. See .env.example for reference.`;
+  
+  if (__DEV__) {
+    console.error(errorMsg);
+    // In development, use placeholders but warn
+    console.warn('⚠️ Using placeholder values. App may not work correctly.');
+  } else {
+    // In production, throw error to prevent app from running with invalid config
+    throw new Error(errorMsg);
+  }
 }
 
-export const supabase = createClient<Database>(supabaseUrl, supabaseAnonKey, {
+// Use placeholders only in development if values are missing
+const finalSupabaseUrl = supabaseUrl || 'https://placeholder.supabase.co';
+const finalSupabaseAnonKey = supabaseAnonKey || 'placeholder-key';
+
+export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAnonKey, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
