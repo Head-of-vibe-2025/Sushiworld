@@ -13,7 +13,7 @@
 
 **Issue:**
 ```typescript
-const LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/sign/assets/SushiWorld_logo.svg?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV9iNTJjNDU5ZS03ZTlmLTRiMWItOWU5OC05ZDVkNjU1YmIzYmUiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJhc3NldHMvU3VzaGlXb3JsZF9sb2dvLnN2ZyIsImlhdCI6MTc2NDc3MzY0OSwiZXhwIjoyMDgwMTMzNjQ5fQ.dJtYtPDgvZf7pwJdil27GhnlEOLWb5fmibXHhBGpLIk';
+const LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/sign/assets/SushiWorld_logo.svg?token=[REDACTED_TOKEN]';
 ```
 
 **Risk:** 
