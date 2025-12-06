@@ -27,12 +27,14 @@ This guide will help you move your existing project to the **Head-of-vibe-2025**
 3. Branch name pattern: `main`
 4. Enable these settings:
    - ✅ **Require a pull request before merging**
-   - ✅ **Require approvals** (set to 1)
-   - ✅ **Dismiss stale pull request approvals when new commits are pushed**
+   - ⚠️ **Require approvals** - *Check with your partner if you want this enabled*
+     - If yes: Set to 1 approval required
+     - If no: Leave unchecked (you can still review each other's code, but it won't block merging)
+   - ✅ **Dismiss stale pull request approvals when new commits are pushed** (only if approvals are required)
    - ✅ **Require status checks to pass before merging** (optional, but recommended)
 5. Click **"Create"**
 
-This ensures all code is reviewed before merging to main!
+**Note:** The original prompt mentioned requiring approvals, but you mentioned you're not sure if you need this. You can always change this setting later in the branch protection rules.
 
 ## Step 5: Add Your Partner as Collaborator
 
