@@ -1,5 +1,8 @@
 name: CI/CD Pipeline
 
+# This workflow runs on push and PR to main/develop branches
+# Jobs are set to continue-on-error so they don't block the workflow
+
 on:
   push:
     branches:
