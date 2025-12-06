@@ -28,15 +28,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run linter
+      - name: Check for lint script
+        id: check-lint
         run: |
-          if npm run 2>&1 | grep -q "^  lint"; then
-            npm run lint
+          if npm run 2>&1 | grep -qE "^\s+lint\s"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
           else
-            echo "⚠️  Lint script not found, skipping..."
-            exit 0
+            echo "exists=false" >> $GITHUB_OUTPUT
           fi
-        continue-on-error: true
+
+      - name: Run linter
+        if: steps.check-lint.outputs.exists == 'true'
+        run: npm run lint
+
+      - name: Skip lint (no script)
+        if: steps.check-lint.outputs.exists == 'false'
+        run: echo "ℹ️  Lint script not found - skipping (this is normal for Expo projects)"
 
   # Testing
   test:
@@ -56,7 +63,7 @@ jobs:
         run: npm ci
 
       - name: Run tests
-        run: npm run test:ci || npm test || echo "⚠️  Tests failed or not configured"
+        run: npm run test:ci
         continue-on-error: true
 
   # Build
@@ -76,16 +83,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build project
+      - name: Check for build script
+        id: check-build
         run: |
-          if npm run 2>&1 | grep -q "^  build"; then
-            npm run build
+          if npm run 2>&1 | grep -qE "^\s+build\s"; then
+            echo "exists=true" >> $GITHUB_OUTPUT
           else
-            echo "⚠️  Build script not found, skipping..."
-            echo "ℹ️  For Expo projects, builds are typically done via EAS Build"
-            exit 0
+            echo "exists=false" >> $GITHUB_OUTPUT
           fi
-        continue-on-error: true
+
+      - name: Build project
+        if: steps.check-build.outputs.exists == 'true'
+        run: npm run build
+
+      - name: Skip build (no script)
+        if: steps.check-build.outputs.exists == 'false'
+        run: |
+          echo "ℹ️  Build script not found - skipping"
+          echo "ℹ️  For Expo projects, builds are typically done via EAS Build"
 
   # Deploy to Staging (on develop branch push)
   deploy-staging:
