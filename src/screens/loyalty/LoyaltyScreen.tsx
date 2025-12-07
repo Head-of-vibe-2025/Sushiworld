@@ -17,6 +17,49 @@ export default function LoyaltyScreen() {
   const navigation = useNavigation<LoyaltyScreenNavigationProp>();
   const { user } = useAuth();
 
+  // If user is not authenticated, show sign-in prompt
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.authPromptCard}>
+          <Text style={styles.authPromptTitle}>Join our loyalty program</Text>
+          <Text style={styles.authPromptText}>
+            Create an account to earn points on every order and redeem rewards. 
+            If you've already ordered, your pending points will be automatically added to your account!
+          </Text>
+          <Button
+            title="Create Account"
+            onPress={() => {
+              (navigation as any).navigate('Auth', { screen: 'Signup' });
+            }}
+            variant="primary"
+            fullWidth
+            size="large"
+            style={styles.authButton}
+          />
+          <Button
+            title="Sign In"
+            onPress={() => {
+              (navigation as any).navigate('Auth', { screen: 'Login' });
+            }}
+            variant="secondary"
+            fullWidth
+            size="large"
+            style={styles.authButton}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              (navigation as any).navigate('Menu');
+            }}
+            style={styles.continueButton}
+          >
+            <Text style={styles.continueText}>Continue browsing</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
   // Placeholder data - will be fetched from Supabase
   const points = 1250;
   const pendingPoints = 450;
@@ -39,8 +82,18 @@ export default function LoyaltyScreen() {
             You have {formatPoints(pendingPoints)} pending points
           </Text>
           <Text style={styles.pendingSubtext}>
-            Create an account to claim them!
+            Create an account to claim them and start earning rewards!
           </Text>
+          <Button
+            title="Create Account to Claim Points"
+            onPress={() => {
+              (navigation as any).navigate('Auth', { screen: 'Signup' });
+            }}
+            variant="primary"
+            fullWidth
+            size="medium"
+            style={styles.claimButton}
+          />
         </View>
       )}
 
@@ -107,7 +160,7 @@ const styles = StyleSheet.create({
   },
   pendingCard: {
     backgroundColor: '#FFF3CD',
-    padding: 15,
+    padding: 20,
     borderRadius: 12,
     marginBottom: 20,
   },
@@ -119,6 +172,10 @@ const styles = StyleSheet.create({
   pendingSubtext: {
     fontSize: 14,
     color: '#666',
+    marginBottom: 15,
+  },
+  claimButton: {
+    marginTop: 5,
   },
   qrCard: {
     backgroundColor: '#f8f8f8',
@@ -147,6 +204,39 @@ const styles = StyleSheet.create({
   },
   historyButton: {
     marginTop: 0,
+  },
+  authPromptCard: {
+    backgroundColor: '#f8f8f8',
+    padding: 30,
+    borderRadius: 16,
+    alignItems: 'center',
+    marginTop: 60,
+  },
+  authPromptTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  authPromptText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+    marginBottom: 30,
+    lineHeight: 24,
+  },
+  authButton: {
+    marginBottom: 12,
+  },
+  continueButton: {
+    marginTop: 10,
+    padding: 10,
+  },
+  continueText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    textDecorationLine: 'underline',
   },
 });
 

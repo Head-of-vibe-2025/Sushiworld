@@ -52,18 +52,24 @@ ALTER TABLE menu_categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE menu_items ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies - Allow public read access
+-- Drop existing policies if they exist, then create new ones
+DROP POLICY IF EXISTS "Public can view categories" ON menu_categories;
 CREATE POLICY "Public can view categories"
   ON menu_categories FOR SELECT
   USING (true);
 
+DROP POLICY IF EXISTS "Public can view menu items" ON menu_items;
 CREATE POLICY "Public can view menu items"
   ON menu_items FOR SELECT
   USING (true);
 
 -- Triggers to automatically update updated_at
+-- Drop existing triggers if they exist, then create new ones
+DROP TRIGGER IF EXISTS update_menu_categories_updated_at ON menu_categories;
 CREATE TRIGGER update_menu_categories_updated_at BEFORE UPDATE ON menu_categories
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_menu_items_updated_at ON menu_items;
 CREATE TRIGGER update_menu_items_updated_at BEFORE UPDATE ON menu_items
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 

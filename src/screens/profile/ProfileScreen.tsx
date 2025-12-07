@@ -20,6 +20,62 @@ export default function ProfileScreen() {
     await signOut();
   };
 
+  // If user is not authenticated, show sign-in prompt
+  if (!user) {
+    return (
+      <View style={styles.container}>
+        <View style={styles.guestCard}>
+          <Text style={styles.guestTitle}>Welcome, Guest!</Text>
+          <Text style={styles.guestText}>
+            Create an account to:
+          </Text>
+          <View style={styles.benefitsList}>
+            <Text style={styles.benefitItem}>• View your order history</Text>
+            <Text style={styles.benefitItem}>• Earn and redeem loyalty points</Text>
+            <Text style={styles.benefitItem}>• Claim pending points from previous orders</Text>
+            <Text style={styles.benefitItem}>• Save your preferences</Text>
+          </View>
+          <Button
+            title="Create Account"
+            onPress={() => {
+              (navigation as any).navigate('Auth', { screen: 'Signup' });
+            }}
+            variant="primary"
+            fullWidth
+            size="large"
+            style={styles.authButton}
+          />
+          <Button
+            title="Sign In"
+            onPress={() => {
+              (navigation as any).navigate('Auth', { screen: 'Login' });
+            }}
+            variant="secondary"
+            fullWidth
+            size="large"
+            style={styles.authButton}
+          />
+          <TouchableOpacity
+            onPress={() => {
+              (navigation as any).navigate('Menu');
+            }}
+            style={styles.continueButton}
+          >
+            <Text style={styles.continueText}>Continue browsing</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.regionCard}>
+          <Text style={styles.regionLabel}>Region</Text>
+          <Text style={styles.regionValue}>
+            {region === 'BE' ? 'Belgium' : 'Luxembourg'}
+          </Text>
+        </View>
+      </View>
+    );
+  }
+
+  // Authenticated user view
   return (
     <View style={styles.container}>
       <View style={styles.profileCard}>
@@ -45,15 +101,13 @@ export default function ProfileScreen() {
         <Text style={styles.menuItemArrow}>→</Text>
       </TouchableOpacity>
 
-      {user && (
-        <Button
-          title="Sign Out"
-          onPress={handleSignOut}
-          variant="secondary"
-          fullWidth
-          style={styles.signOutButton}
-        />
-      )}
+      <Button
+        title="Sign Out"
+        onPress={handleSignOut}
+        variant="secondary"
+        fullWidth
+        style={styles.signOutButton}
+      />
     </View>
   );
 }
@@ -96,6 +150,62 @@ const styles = StyleSheet.create({
   },
   signOutButton: {
     marginTop: 30,
+  },
+  guestCard: {
+    backgroundColor: '#f8f8f8',
+    padding: 30,
+    borderRadius: 16,
+    marginBottom: 30,
+  },
+  guestTitle: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  guestText: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 15,
+  },
+  benefitsList: {
+    marginBottom: 30,
+    paddingLeft: 10,
+  },
+  benefitItem: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 8,
+    lineHeight: 24,
+  },
+  authButton: {
+    marginBottom: 12,
+  },
+  regionCard: {
+    backgroundColor: '#f8f8f8',
+    padding: 20,
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  regionLabel: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  regionValue: {
+    fontSize: 16,
+    color: '#666',
+  },
+  continueButton: {
+    marginTop: 10,
+    padding: 10,
+  },
+  continueText: {
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+    textDecorationLine: 'underline',
   },
 });
 
