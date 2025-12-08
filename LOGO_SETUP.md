@@ -88,3 +88,4 @@ export const LOGO_URL = process.env.EXPO_PUBLIC_LOGO_URL || 'https://via.placeho
 3. Host on your website
 4. Use a service like Imgur (temporary solution)
 
+
