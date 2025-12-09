@@ -26,6 +26,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.screenPadding,
   },
   title: {
+    fontFamily: typography.sectionHeader.fontFamily,
     fontSize: typography.sectionHeader.fontSize,
     fontWeight: typography.sectionHeader.fontWeight,
     lineHeight: typography.sectionHeader.fontSize * typography.sectionHeader.lineHeight,

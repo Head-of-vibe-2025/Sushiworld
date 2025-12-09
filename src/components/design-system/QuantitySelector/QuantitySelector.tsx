@@ -101,6 +101,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   quantity: {
+    fontFamily: typography.fontFamily.semibold,
     fontSize: typography.bodyText.fontSize,
     fontWeight: typography.fontWeights.semibold,
     color: colors.text.primary,

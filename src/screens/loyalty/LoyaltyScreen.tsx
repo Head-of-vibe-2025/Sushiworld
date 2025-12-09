@@ -132,7 +132,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#F6F6F6',
   },
   pointsCard: {
     backgroundColor: '#FF6B6B',
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   qrContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: '#F6F6F6',
     padding: 20,
     borderRadius: 12,
   },

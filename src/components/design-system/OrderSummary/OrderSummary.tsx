@@ -49,11 +49,13 @@ const styles = StyleSheet.create({
     marginVertical: spacing.sm,
   },
   label: {
+    fontFamily: typography.bodyText.fontFamily,
     fontSize: typography.bodyText.fontSize,
     fontWeight: typography.fontWeights.regular,
     color: colors.text.primary,
   },
   value: {
+    fontFamily: typography.fontFamily.semibold,
     fontSize: typography.bodyText.fontSize,
     fontWeight: typography.fontWeights.semibold,
     color: colors.text.primary,

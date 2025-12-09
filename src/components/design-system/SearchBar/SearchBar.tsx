@@ -3,7 +3,16 @@
 
 import React from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
 import { colors, borderRadius, spacing, typography, iconSizes, shadows } from '../../../theme/designTokens';
+
+// Magnifier Icon Component
+const MagnifierIcon = ({ color = '#8E93A6', size = 20 }: { color?: string; size?: number }) => (
+  <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
+    <Circle cx="11.5" cy="11.5" r="9.5" stroke={color} strokeWidth="2" />
+    <Path d="M18.5 18.5L22 22" stroke="#1C274C" strokeWidth="2" strokeLinecap="round" />
+  </Svg>
+);
 
 export interface SearchBarProps {
   value: string;
@@ -32,20 +41,9 @@ export default function SearchBar({
           testID={testID}
         />
         <View style={styles.iconContainer}>
-          {/* Magnifying glass icon - you can replace with actual icon component */}
-          <View style={styles.searchIcon} />
+          <MagnifierIcon color="#8E93A6" size={20} />
         </View>
       </View>
-      {onFilterPress && (
-        <TouchableOpacity
-          style={styles.filterButton}
-          onPress={onFilterPress}
-          activeOpacity={0.7}
-        >
-          {/* Filter icon - you can replace with actual icon component */}
-          <View style={styles.filterIcon} />
-        </TouchableOpacity>
-      )}
     </View>
   );
 }
@@ -60,15 +58,20 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.primary,
-    borderRadius: borderRadius['2xl'],
+    backgroundColor: 'white',
+    borderRadius: 20,
     paddingHorizontal: spacing.base,
     height: 44,
-    ...shadows.md,
     borderWidth: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 15,
+    elevation: 15,
   },
   input: {
     flex: 1,
+    fontFamily: typography.bodyText.fontFamily,
     fontSize: typography.bodyText.fontSize,
     fontWeight: typography.bodyText.fontWeight,
     color: colors.text.primary,
@@ -76,26 +79,6 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     marginLeft: spacing.sm,
-  },
-  searchIcon: {
-    width: iconSizes.md,
-    height: iconSizes.md,
-    backgroundColor: colors.text.secondary,
-    borderRadius: borderRadius.full,
-  },
-  filterButton: {
-    width: 44,
-    height: 44,
-    backgroundColor: colors.primary.black,
-    borderRadius: borderRadius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-    ...shadows.md,
-  },
-  filterIcon: {
-    width: iconSizes.md,
-    height: iconSizes.md,
-    backgroundColor: colors.text.inverse,
   },
 });
 

@@ -119,6 +119,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
+    fontFamily: typography.buttonText.fontFamily,
     fontSize: typography.buttonText.fontSize,
     fontWeight: typography.buttonText.fontWeight,
     lineHeight: typography.buttonText.fontSize * typography.buttonText.lineHeight,

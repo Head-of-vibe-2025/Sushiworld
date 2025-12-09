@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     borderColor: colors.primary.black,
   },
   text: {
+    fontFamily: typography.fontFamily.medium,
     fontSize: typography.bodyText.fontSize,
     fontWeight: typography.fontWeights.medium,
     color: colors.text.primary,

@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
     gap: spacing.xs,
   },
   name: {
+    fontFamily: typography.productName.fontFamily,
     fontSize: typography.productName.fontSize,
     fontWeight: typography.productName.fontWeight,
     color: colors.text.primary,

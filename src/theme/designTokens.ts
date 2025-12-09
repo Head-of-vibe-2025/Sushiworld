@@ -32,25 +32,26 @@ export const colors = {
     pink: '#F472B6',
   },
   background: {
-    primary: '#F6F6F6',
+    primary: '#F6F6F6', // App background color
     secondary: '#F9FAFB',
     card: '#FFFFFF',
-    navigation: '#000000',
+    navigation: '#FFFFFF', // White navigation bar
+    searchBar: '#F5F5F5', // Light gray for search bar
   },
   text: {
-    primary: '#000000',
-    secondary: '#6B7280',
-    tertiary: '#9CA3AF',
+    primary: '#000000', // Pure black text
+    secondary: '#666666', // Medium gray
+    tertiary: '#999999', // Light gray
     inverse: '#FFFFFF',
-    link: '#EA3886',
+    link: '#000000',
   },
   border: {
-    light: '#E5E7EB',
+    light: '#E0E0E0',
     medium: '#D1D5DB',
     dark: '#000000',
   },
   shadow: {
-    color: 'rgba(0, 0, 0, 0.1)',
+    color: 'rgba(0, 0, 0, 0.05)', // Very subtle shadows
     glowGreen: 'rgba(74, 222, 128, 0.2)',
     glowPink: 'rgba(244, 114, 182, 0.2)',
   },
@@ -65,16 +66,22 @@ export const borderRadius = {
   '2xl': 20,
   full: 9999,
   // Specific border radius values
-  productCard: 12,
+  productCard: 16, // Slightly more rounded
   productImage: 12,
   thumbnail: 9999, // 50% for circular
   button: 8,
   searchBar: 12,
-  filterTag: 20,
+  filterTag: 20, // Rounded pill shape
   quantitySelector: 8,
 } as const;
 
 export const typography = {
+  fontFamily: {
+    regular: 'Poppins_400Regular',
+    medium: 'Poppins_500Medium',
+    semibold: 'Poppins_600SemiBold',
+    bold: 'Poppins_700Bold',
+  },
   fontSizes: {
     xs: 12,
     sm: 14,
@@ -98,36 +105,43 @@ export const typography = {
   },
   // Specific typography styles
   screenTitle: {
+    fontFamily: 'Poppins_700Bold',
     fontSize: 24,
     fontWeight: '700' as const,
     lineHeight: 1.2,
   },
   sectionHeader: {
+    fontFamily: 'Poppins_700Bold',
     fontSize: 20,
     fontWeight: '700' as const,
     lineHeight: 1.3,
   },
   productName: {
+    fontFamily: 'Poppins_600SemiBold',
     fontSize: 18,
     fontWeight: '600' as const,
     lineHeight: 1.4,
   },
   productDescription: {
+    fontFamily: 'Poppins_400Regular',
     fontSize: 14,
     fontWeight: '400' as const,
     lineHeight: 1.6,
   },
   price: {
+    fontFamily: 'Poppins_600SemiBold',
     fontSize: 16,
     fontWeight: '600' as const,
     lineHeight: 1.5,
   },
   bodyText: {
+    fontFamily: 'Poppins_400Regular',
     fontSize: 16,
     fontWeight: '400' as const,
     lineHeight: 1.5,
   },
   buttonText: {
+    fontFamily: 'Poppins_600SemiBold',
     fontSize: 16,
     fontWeight: '600' as const,
     lineHeight: 1.5,
@@ -139,23 +153,23 @@ export const shadows = {
   sm: {
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.03,
     shadowRadius: 2,
     elevation: 1,
   },
   md: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.1,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
   lg: {
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 10 },
-    shadowOpacity: 0.1,
-    shadowRadius: 15,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
   glowGreen: {
     shadowColor: colors.accent.green,

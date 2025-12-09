@@ -48,10 +48,14 @@ export default function ProductCard({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: colors.background.card,
-    borderRadius: borderRadius.productCard,
+    backgroundColor: 'white',
+    borderRadius: 20,
     padding: spacing.cardPadding,
-    ...shadows.md,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.15,
+    shadowRadius: 30,
+    elevation: 25,
     marginBottom: spacing.md,
   },
   image: {
@@ -64,6 +68,7 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
   },
   name: {
+    fontFamily: typography.productName.fontFamily,
     fontSize: typography.productName.fontSize,
     fontWeight: typography.productName.fontWeight,
     lineHeight: typography.productName.fontSize * typography.productName.lineHeight,
@@ -73,6 +78,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   price: {
+    fontFamily: typography.price.fontFamily,
     fontSize: typography.price.fontSize,
     fontWeight: typography.price.fontWeight,
     lineHeight: typography.price.fontSize * typography.price.lineHeight,

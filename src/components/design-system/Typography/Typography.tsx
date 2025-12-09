@@ -79,36 +79,43 @@ export function Link(props: Omit<TypographyProps, 'variant' | 'color'>) {
 
 const styles = StyleSheet.create({
   screenTitle: {
+    fontFamily: typography.screenTitle.fontFamily,
     fontSize: typography.screenTitle.fontSize,
     fontWeight: typography.screenTitle.fontWeight,
     lineHeight: typography.screenTitle.fontSize * typography.screenTitle.lineHeight,
   },
   sectionHeader: {
+    fontFamily: typography.sectionHeader.fontFamily,
     fontSize: typography.sectionHeader.fontSize,
     fontWeight: typography.sectionHeader.fontWeight,
     lineHeight: typography.sectionHeader.fontSize * typography.sectionHeader.lineHeight,
   },
   productName: {
+    fontFamily: typography.productName.fontFamily,
     fontSize: typography.productName.fontSize,
     fontWeight: typography.productName.fontWeight,
     lineHeight: typography.productName.fontSize * typography.productName.lineHeight,
   },
   productDescription: {
+    fontFamily: typography.productDescription.fontFamily,
     fontSize: typography.productDescription.fontSize,
     fontWeight: typography.productDescription.fontWeight,
     lineHeight: typography.productDescription.fontSize * typography.productDescription.lineHeight,
   },
   price: {
+    fontFamily: typography.price.fontFamily,
     fontSize: typography.price.fontSize,
     fontWeight: typography.price.fontWeight,
     lineHeight: typography.price.fontSize * typography.price.lineHeight,
   },
   bodyText: {
+    fontFamily: typography.bodyText.fontFamily,
     fontSize: typography.bodyText.fontSize,
     fontWeight: typography.bodyText.fontWeight,
     lineHeight: typography.bodyText.fontSize * typography.bodyText.lineHeight,
   },
   link: {
+    fontFamily: typography.bodyText.fontFamily,
     fontSize: typography.bodyText.fontSize,
     fontWeight: typography.bodyText.fontWeight,
     lineHeight: typography.bodyText.fontSize * typography.bodyText.lineHeight,
