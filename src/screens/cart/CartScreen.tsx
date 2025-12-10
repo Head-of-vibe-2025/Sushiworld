@@ -1,13 +1,12 @@
 // Cart Screen
 
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCart } from '../../context/CartContext';
-import { Button } from '../../components/design-system';
 import { formatPrice } from '../../utils/formatting';
-import { spacing, colors } from '../../theme/designTokens';
+import { spacing, colors, borderRadius } from '../../theme/designTokens';
 import type { NavigationParamList } from '../../types/app.types';
 
 type CartScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Cart'>;
@@ -17,7 +16,7 @@ export default function CartScreen() {
   const { items, removeItem, updateQuantity, getTotal } = useCart();
 
   const renderItem = ({ item }: { item: typeof items[0] }) => (
-    <View style={styles.cartItem}>
+    <View style={styles.cartItemCard}>
       {item.image && (
         <Image source={{ uri: item.image }} style={styles.itemThumbnail} />
       )}
@@ -25,21 +24,23 @@ export default function CartScreen() {
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemPrice}>{formatPrice(item.price)}</Text>
       </View>
-      <View style={styles.quantityControls}>
+      <View style={styles.quantitySelector}>
         <TouchableOpacity
-          onPress={() => updateQuantity(item.id, item.quantity - 1)}
-          style={styles.quantityButton}
+          onPress={() => updateQuantity(item.id, item.quantity + 1)}
+          style={styles.quantityButtonTop}
+          activeOpacity={0.7}
         >
-          <Text style={styles.quantityButtonText}>−</Text>
+          <Text style={styles.quantityButtonText}>+</Text>
         </TouchableOpacity>
         <View style={styles.quantityDisplay}>
           <Text style={styles.quantity}>{item.quantity}</Text>
         </View>
         <TouchableOpacity
-          onPress={() => updateQuantity(item.id, item.quantity + 1)}
-          style={styles.quantityButton}
+          onPress={() => updateQuantity(item.id, item.quantity - 1)}
+          style={styles.quantityButtonBottom}
+          activeOpacity={0.7}
         >
-          <Text style={styles.quantityButtonText}>+</Text>
+          <Text style={styles.quantityButtonText}>−</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -66,46 +67,55 @@ export default function CartScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Cart</Text>
         <TouchableOpacity style={styles.profileButton}>
-          <Text style={styles.profileIcon}>👤</Text>
+          <View style={styles.avatarContainer}>
+            <View style={styles.avatar} />
+          </View>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.content}>
+      <ScrollView 
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
         <Text style={styles.cartListTitle}>My Cart List</Text>
         
-        <FlatList
-          data={items}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          scrollEnabled={false}
-        />
-
-        <View style={styles.promoSection}>
-          <Text style={styles.promoIcon}>🏷️</Text>
-          <Text style={styles.promoText}>Do You have any promo code?</Text>
+        <View style={styles.itemsContainer}>
+          <FlatList
+            data={items}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            scrollEnabled={false}
+            ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
+          />
         </View>
+
+        <TouchableOpacity style={styles.promoSection}>
+          <Text style={styles.promoIcon}>%</Text>
+          <Text style={styles.promoText}>Do You have any promo code?</Text>
+        </TouchableOpacity>
 
         <View style={styles.orderSummary}>
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Subtotal</Text>
             <Text style={styles.summaryValue}>{formatPrice(subtotal)}</Text>
           </View>
+          <View style={styles.dashedLine} />
           <View style={styles.summaryRow}>
             <Text style={styles.summaryLabel}>Total</Text>
             <Text style={styles.totalAmount}>{formatPrice(subtotal)}</Text>
           </View>
         </View>
-      </View>
+      </ScrollView>
 
       <View style={styles.footer}>
-        <Button
-          title="Checkout"
+        <TouchableOpacity
+          style={styles.checkoutButton}
           onPress={() => navigation.navigate('Checkout')}
-          variant="primary"
-          fullWidth
-          size="large"
-        />
+          activeOpacity={0.8}
+        >
+          <Text style={styles.checkoutButtonText}>Go to checkout</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -114,7 +124,7 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: colors.primary.white,
   },
   header: {
     flexDirection: 'row',
@@ -123,116 +133,164 @@ const styles = StyleSheet.create({
     paddingTop: 50,
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.base,
+    backgroundColor: colors.primary.white,
   },
   backButton: {
     padding: 8,
+    width: 40,
   },
   backIcon: {
     fontSize: 24,
-    color: '#000',
+    color: colors.text.primary,
   },
   headerTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#000',
+    color: colors.text.primary,
+    fontFamily: 'Poppins_700Bold',
   },
   profileButton: {
     padding: 8,
+    width: 40,
+    alignItems: 'flex-end',
   },
-  profileIcon: {
-    fontSize: 24,
-    color: '#000',
+  avatarContainer: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: colors.background.searchBar,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  avatar: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: colors.accent.pink,
+  },
+  scrollView: {
+    flex: 1,
   },
   content: {
-    flex: 1,
     paddingHorizontal: spacing.screenPadding,
+    paddingBottom: spacing.xl,
   },
   cartListTitle: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: '700',
-    color: '#000',
+    color: colors.text.primary,
+    fontFamily: 'Poppins_700Bold',
+    marginBottom: spacing.xl,
+  },
+  itemsContainer: {
     marginBottom: spacing.base,
   },
-  list: {
-    paddingBottom: spacing.base,
-  },
-  cartItem: {
+  cartItemCard: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.background.card,
+    borderRadius: borderRadius.lg,
+    padding: spacing.base,
     marginBottom: spacing.base,
-    gap: spacing.base,
+  },
+  itemSeparator: {
+    height: spacing.base,
   },
   itemThumbnail: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     resizeMode: 'cover',
+    backgroundColor: colors.background.searchBar,
   },
   itemInfo: {
     flex: 1,
+    marginLeft: spacing.base,
   },
   itemName: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
-    color: '#000',
+    color: colors.text.primary,
+    fontFamily: 'Poppins_600SemiBold',
     marginBottom: 4,
   },
   itemPrice: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
+    color: colors.text.primary,
+    fontFamily: 'Poppins_600SemiBold',
   },
-  quantityControls: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.sm,
-  },
-  quantityButton: {
+  quantitySelector: {
     width: 32,
+    height: 96,
+    backgroundColor: colors.primary.black,
+    borderRadius: borderRadius.sm,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 0,
+    marginLeft: spacing.sm,
+  },
+  quantityButtonTop: {
+    width: '100%',
     height: 32,
-    borderRadius: 8,
-    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 2,
+  },
+  quantityButtonBottom: {
+    width: '100%',
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingBottom: 2,
   },
   quantityButtonText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: colors.text.inverse,
+    fontFamily: 'Poppins_600SemiBold',
+    lineHeight: 18,
   },
   quantityDisplay: {
-    width: 40,
+    width: '100%',
     height: 32,
-    borderRadius: 8,
-    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
+    flex: 0,
   },
   quantity: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text.inverse,
+    fontFamily: 'Poppins_700Bold',
+    lineHeight: 20,
   },
   promoSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: spacing.sm,
-    paddingVertical: spacing.base,
+    backgroundColor: colors.background.card,
+    borderRadius: borderRadius.lg,
+    padding: spacing.base,
     marginTop: spacing.base,
+    marginBottom: spacing.xl,
+    gap: spacing.sm,
   },
   promoIcon: {
     fontSize: 20,
+    fontWeight: '600',
+    color: colors.text.primary,
+    width: 24,
+    textAlign: 'center',
   },
   promoText: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#000',
+    color: colors.text.primary,
+    fontFamily: 'Poppins_500Medium',
+    flex: 1,
   },
   orderSummary: {
     marginTop: spacing.base,
-    paddingTop: spacing.base,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
   },
   summaryRow: {
     flexDirection: 'row',
@@ -240,36 +298,62 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.sm,
   },
+  dashedLine: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border.light,
+    borderStyle: 'dashed',
+    marginVertical: spacing.sm,
+  },
   summaryLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#666',
+    color: colors.text.secondary,
+    fontFamily: 'Poppins_500Medium',
   },
   summaryValue: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
+    color: colors.text.primary,
+    fontFamily: 'Poppins_600SemiBold',
   },
   totalAmount: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#000',
+    color: colors.text.primary,
+    fontFamily: 'Poppins_700Bold',
   },
   footer: {
     padding: spacing.screenPadding,
     paddingBottom: 40,
+    backgroundColor: colors.primary.white,
     borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    backgroundColor: '#F6F6F6',
+    borderTopColor: colors.border.light,
+  },
+  checkoutButton: {
+    backgroundColor: colors.primary.black,
+    borderRadius: borderRadius.full,
+    paddingVertical: spacing.base + 4,
+    paddingHorizontal: spacing.xl,
+    alignItems: 'center',
+    justifyContent: 'center',
+    minHeight: 56,
+  },
+  checkoutButtonText: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: colors.text.inverse,
+    fontFamily: 'Poppins_600SemiBold',
   },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: colors.primary.white,
   },
   emptyText: {
     fontSize: 18,
-    color: '#666',
+    color: colors.text.secondary,
+    fontFamily: 'Poppins_500Medium',
   },
 });
 
