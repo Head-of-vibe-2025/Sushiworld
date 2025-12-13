@@ -86,18 +86,41 @@ serve(async (req) => {
       return undefined;
     };
 
+    // Helper function to fetch all items with pagination
+    const fetchAllItems = async (collectionId: string): Promise<WebflowItem[]> => {
+      const allItems: WebflowItem[] = [];
+      let offset = 0;
+      const limit = 100; // Webflow API max limit per request
+      let hasMore = true;
+
+      while (hasMore) {
+        const response = await fetch(
+          `https://api.webflow.com/v2/collections/${collectionId}/items?limit=${limit}&offset=${offset}`,
+          { headers: webflowHeaders }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Webflow API error: ${response.statusText}`);
+        }
+
+        const data: WebflowResponse = await response.json();
+        allItems.push(...data.items);
+
+        // Check if there are more items to fetch
+        hasMore = data.items.length === limit;
+        offset += limit;
+      }
+
+      return allItems;
+    };
+
     // Step 1: Sync Categories (if category collection exists)
     let categoryCount = 0;
     if (categoryCollectionId) {
-      const categoriesResponse = await fetch(
-        `https://api.webflow.com/v2/collections/${categoryCollectionId}/items?limit=100`,
-        { headers: webflowHeaders }
-      );
-
-      if (categoriesResponse.ok) {
-        const categoriesData: WebflowResponse = await categoriesResponse.json();
+      try {
+        const allCategories = await fetchAllItems(categoryCollectionId);
         
-        for (const category of categoriesData.items) {
+        for (const category of allCategories) {
           const categoryData = {
             webflow_id: category.id,
             name: category.fieldData?.name || 'Unnamed Category',
@@ -118,20 +141,13 @@ serve(async (req) => {
           }
         }
         console.log(`Synced ${categoryCount} categories`);
+      } catch (error) {
+        console.error('Error syncing categories:', error);
       }
     }
 
-    // Step 2: Sync Menu Items
-    const itemsResponse = await fetch(
-      `https://api.webflow.com/v2/collections/${menuCollectionId}/items?limit=100`,
-      { headers: webflowHeaders }
-    );
-
-    if (!itemsResponse.ok) {
-      throw new Error(`Webflow API error: ${itemsResponse.statusText}`);
-    }
-
-    const data: WebflowResponse = await itemsResponse.json();
+    // Step 2: Sync Menu Items (with pagination)
+    const allMenuItems = await fetchAllItems(menuCollectionId);
 
     // Get category mapping
     const { data: categories } = await supabase
@@ -147,8 +163,8 @@ serve(async (req) => {
     let syncedCount = 0;
     let errorCount = 0;
 
-    for (let i = 0; i < data.items.length; i += batchSize) {
-      const batch = data.items.slice(i, i + batchSize);
+    for (let i = 0; i < allMenuItems.length; i += batchSize) {
+      const batch = allMenuItems.slice(i, i + batchSize);
       
       const syncPromises = batch.map(async (item) => {
         try {
@@ -163,10 +179,26 @@ serve(async (req) => {
 
           // Fetch SKU image if available
           const skuId = item.fieldData?.['default-sku'];
-          let imageUrl = item.fieldData?.['main-image']?.url || item.fieldData?.image?.url;
           
-          if (skuId && !imageUrl) {
-            imageUrl = await fetchSkuImage(skuId);
+          // Try multiple image field variations from Webflow
+          let imageUrl = 
+            item.fieldData?.['main-image']?.url ||
+            item.fieldData?.image?.url;
+          
+          // If no image found, try fetching from SKU (even if we have an image, SKU might be better)
+          if (skuId) {
+            const skuImage = await fetchSkuImage(skuId);
+            if (skuImage) {
+              imageUrl = skuImage;
+            }
+          }
+          
+          // If still no image, try additional field variations
+          if (!imageUrl) {
+            imageUrl = 
+              item.fieldData?.['product-image']?.url ||
+              item.fieldData?.photo?.url ||
+              item.fieldData?.['thumbnail']?.url;
           }
 
           const menuItemData = {
@@ -210,7 +242,7 @@ serve(async (req) => {
         items: {
           synced: syncedCount,
           errors: errorCount,
-          total: data.items.length,
+          total: allMenuItems.length,
         },
         timestamp: new Date().toISOString(),
       }),
@@ -224,4 +256,5 @@ serve(async (req) => {
     );
   }
 });
+
 

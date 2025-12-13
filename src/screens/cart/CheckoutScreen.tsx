@@ -1,7 +1,9 @@
 // Checkout Screen
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, Alert, TouchableOpacity, ScrollView } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import * as WebBrowser from 'expo-web-browser';
@@ -12,53 +14,18 @@ import { buildFoxyCheckoutUrl, buildCheckoutParamsFromCart } from '../../service
 import { formatPrice } from '../../utils/formatting';
 import { isValidEmail } from '../../utils/validation';
 import { spacing, colors, borderRadius, typography } from '../../theme/designTokens';
-import { profileService } from '../../services/supabase/profileService';
 import type { NavigationParamList } from '../../types/app.types';
 
 type CheckoutScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Checkout'>;
 
-interface Address {
-  street: string;
-  city: string;
-  postalCode: string;
-  country: string;
-}
-
 export default function CheckoutScreen() {
   const navigation = useNavigation<CheckoutScreenNavigationProp>();
+  const insets = useSafeAreaInsets();
   const { items, getTotal, clearCart } = useCart();
   const { region } = useRegion();
   const { user } = useAuth();
   const [email, setEmail] = useState(user?.email || '');
-  const [address, setAddress] = useState<Address>({
-    street: '',
-    city: '',
-    postalCode: '',
-    country: region === 'BE' ? 'Belgium' : 'Luxembourg',
-  });
   const [loading, setLoading] = useState(false);
-  const [loadingAddress, setLoadingAddress] = useState(false);
-
-  // Load address for logged-in users
-  useEffect(() => {
-    const loadUserAddress = async () => {
-      if (user?.email) {
-        setLoadingAddress(true);
-        try {
-          const profile = await profileService.getProfile(user.email);
-          if (profile?.preferences?.address) {
-            setAddress(profile.preferences.address as Address);
-          }
-        } catch (error) {
-          console.error('Error loading address:', error);
-        } finally {
-          setLoadingAddress(false);
-        }
-      }
-    };
-
-    loadUserAddress();
-  }, [user]);
 
   const handleCheckout = async () => {
     // Validate email format only if email is provided (but allow empty email for guest checkout)
@@ -67,33 +34,9 @@ export default function CheckoutScreen() {
       return;
     }
 
-    // Validate address fields
-    if (!address.street.trim() || !address.city.trim() || !address.postalCode.trim()) {
-      Alert.alert('Error', 'Please fill in all address fields');
-      return;
-    }
-
     if (items.length === 0) {
       Alert.alert('Error', 'Your cart is empty');
       return;
-    }
-
-    // Save address for logged-in users
-    if (user?.email) {
-      try {
-        const profile = await profileService.getProfile(user.email);
-        if (profile) {
-          await profileService.updateProfile(profile.id, {
-            preferences: {
-              ...profile.preferences,
-              address: address,
-            },
-          });
-        }
-      } catch (error) {
-        console.error('Error saving address:', error);
-        // Continue with checkout even if saving address fails
-      }
     }
 
     setLoading(true);
@@ -138,22 +81,29 @@ export default function CheckoutScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <BlurView
+        intensity={80}
+        tint="light"
+        style={[styles.header, { paddingTop: insets.top + spacing.screenPadding }]}
+      >
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Order Summary</Text>
         <View style={styles.headerSpacer} />
-      </View>
+      </BlurView>
 
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
       >
+        <View style={styles.titleSpacer} />
+        <Text style={styles.pageTitle}>Order Summary</Text>
+        
         <View style={styles.summary}>
           {items.map((item) => (
             <View key={item.id} style={styles.summaryRow}>
@@ -169,50 +119,6 @@ export default function CheckoutScreen() {
             <Text style={styles.totalLabel}>Total:</Text>
             <Text style={styles.totalAmount}>{formatPrice(getTotal())}</Text>
           </View>
-        </View>
-
-        <View style={styles.form}>
-          <Text style={styles.label}>Delivery Address</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Street address"
-            value={address.street}
-            onChangeText={(text) => setAddress({ ...address, street: text })}
-            placeholderTextColor={colors.text.tertiary}
-            editable={!loadingAddress}
-          />
-          <View style={styles.addressRow}>
-            <TextInput
-              style={[styles.input, styles.inputHalf, styles.inputLeft, { marginBottom: 0 }]}
-              placeholder="City"
-              value={address.city}
-              onChangeText={(text) => setAddress({ ...address, city: text })}
-              placeholderTextColor={colors.text.tertiary}
-              editable={!loadingAddress}
-            />
-            <TextInput
-              style={[styles.input, styles.inputHalf, styles.inputRight, { marginBottom: 0 }]}
-              placeholder="Postal code"
-              value={address.postalCode}
-              onChangeText={(text) => setAddress({ ...address, postalCode: text })}
-              keyboardType="numeric"
-              placeholderTextColor={colors.text.tertiary}
-              editable={!loadingAddress}
-            />
-          </View>
-          <TextInput
-            style={styles.input}
-            placeholder="Country"
-            value={address.country}
-            onChangeText={(text) => setAddress({ ...address, country: text })}
-            placeholderTextColor={colors.text.tertiary}
-            editable={!loadingAddress}
-          />
-          {user && (
-            <Text style={styles.hint}>
-              Your address has been saved from your profile. You can update it above.
-            </Text>
-          )}
         </View>
 
         <View style={styles.form}>
@@ -251,16 +157,19 @@ export default function CheckoutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.white,
+    backgroundColor: colors.background.primary,
   },
   header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 50,
     paddingHorizontal: spacing.screenPadding,
-    paddingBottom: spacing.base,
-    backgroundColor: colors.primary.white,
+    paddingBottom: spacing.xs,
+    zIndex: 1000,
   },
   backButton: {
     padding: 8,
@@ -270,33 +179,39 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: colors.text.primary,
   },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: colors.text.primary,
-    fontFamily: typography.fontFamily.bold,
-    flex: 1,
-    textAlign: 'left',
-  },
   headerSpacer: {
-    width: 40,
+    flex: 1,
   },
   scrollView: {
     flex: 1,
+    overflow: 'visible',
+  },
+  titleSpacer: {
+    height: 70,
+  },
+  pageTitle: {
+    fontFamily: typography.fontFamily.bold,
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#000',
+    letterSpacing: -0.5,
+    lineHeight: 34,
+    marginBottom: spacing.xl,
   },
   content: {
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.xl,
   },
   summary: {
-    marginTop: spacing.base,
     marginBottom: spacing.xl,
+    marginTop: 0,
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: spacing.base,
+    marginBottom: spacing.sm,
+    marginTop: 0,
   },
   summaryItem: {
     fontSize: typography.fontSizes.base,
@@ -327,7 +242,7 @@ const styles = StyleSheet.create({
   totalAmount: {
     fontSize: typography.fontSizes['2xl'],
     fontWeight: typography.fontWeights.bold,
-    color: '#FF6B35', // Red/orange color as shown in image
+    color: '#EA3886',
     fontFamily: typography.fontFamily.bold,
   },
   form: {
@@ -358,29 +273,14 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.regular,
     lineHeight: typography.lineHeights.relaxed * typography.fontSizes.sm,
   },
-  addressRow: {
-    flexDirection: 'row',
-    marginBottom: spacing.sm,
-  },
-  inputHalf: {
-    flex: 1,
-  },
-  inputLeft: {
-    marginRight: spacing.xs,
-  },
-  inputRight: {
-    marginLeft: spacing.xs,
-  },
   footer: {
     padding: spacing.screenPadding,
     paddingBottom: 40,
     backgroundColor: colors.primary.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.light,
   },
   checkoutButton: {
     backgroundColor: colors.primary.black,
-    borderRadius: borderRadius.lg,
+    borderRadius: borderRadius.full,
     paddingVertical: spacing.base + 4,
     paddingHorizontal: spacing.xl,
     alignItems: 'center',
@@ -391,10 +291,10 @@ const styles = StyleSheet.create({
     opacity: 0.6,
   },
   checkoutButtonText: {
-    fontSize: typography.fontSizes.lg,
-    fontWeight: typography.fontWeights.semibold,
+    fontSize: 18,
+    fontWeight: '600',
     color: colors.text.inverse,
-    fontFamily: typography.fontFamily.semibold,
+    fontFamily: 'Poppins_600SemiBold',
   },
 });
 

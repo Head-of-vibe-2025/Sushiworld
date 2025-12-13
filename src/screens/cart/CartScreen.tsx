@@ -2,23 +2,32 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image, ScrollView } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCart } from '../../context/CartContext';
 import { formatPrice } from '../../utils/formatting';
-import { spacing, colors, borderRadius } from '../../theme/designTokens';
+import { spacing, colors, borderRadius, typography, shadows } from '../../theme/designTokens';
 import type { NavigationParamList } from '../../types/app.types';
 
 type CartScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Cart'>;
 
 export default function CartScreen() {
   const navigation = useNavigation<CartScreenNavigationProp>();
+  const insets = useSafeAreaInsets();
   const { items, removeItem, updateQuantity, getTotal } = useCart();
 
   const renderItem = ({ item }: { item: typeof items[0] }) => (
     <View style={styles.cartItemCard}>
       {item.image && (
-        <Image source={{ uri: item.image }} style={styles.itemThumbnail} />
+        <View style={styles.imageWrapper}>
+          <View style={styles.imageShadowContainer}>
+            <View style={styles.imageContainer}>
+              <Image source={{ uri: item.image }} style={styles.itemThumbnail} />
+            </View>
+          </View>
+        </View>
       )}
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.name}</Text>
@@ -26,21 +35,21 @@ export default function CartScreen() {
       </View>
       <View style={styles.quantitySelector}>
         <TouchableOpacity
-          onPress={() => updateQuantity(item.id, item.quantity + 1)}
-          style={styles.quantityButtonTop}
+          onPress={() => updateQuantity(item.id, item.quantity - 1)}
+          style={styles.quantityButton}
           activeOpacity={0.7}
         >
-          <Text style={styles.quantityButtonText}>+</Text>
+          <Text style={styles.quantityButtonText}>−</Text>
         </TouchableOpacity>
         <View style={styles.quantityDisplay}>
           <Text style={styles.quantity}>{item.quantity}</Text>
         </View>
         <TouchableOpacity
-          onPress={() => updateQuantity(item.id, item.quantity - 1)}
-          style={styles.quantityButtonBottom}
+          onPress={() => updateQuantity(item.id, item.quantity + 1)}
+          style={styles.quantityButton}
           activeOpacity={0.7}
         >
-          <Text style={styles.quantityButtonText}>−</Text>
+          <Text style={styles.quantityButtonText}>+</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -58,26 +67,27 @@ export default function CartScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
+      <BlurView
+        intensity={80}
+        tint="light"
+        style={[styles.header, { paddingTop: insets.top + spacing.screenPadding }]}
+      >
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
           <Text style={styles.backIcon}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Cart</Text>
-        <TouchableOpacity style={styles.profileButton}>
-          <View style={styles.avatarContainer}>
-            <View style={styles.avatar} />
-          </View>
-        </TouchableOpacity>
-      </View>
+        <View style={styles.headerSpacer} />
+      </BlurView>
 
       <ScrollView 
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        contentInsetAdjustmentBehavior="automatic"
       >
+        <View style={styles.titleSpacer} />
         <Text style={styles.cartListTitle}>My Cart List</Text>
         
         <View style={styles.itemsContainer}>
@@ -89,11 +99,6 @@ export default function CartScreen() {
             ItemSeparatorComponent={() => <View style={styles.itemSeparator} />}
           />
         </View>
-
-        <TouchableOpacity style={styles.promoSection}>
-          <Text style={styles.promoIcon}>%</Text>
-          <Text style={styles.promoText}>Do You have any promo code?</Text>
-        </TouchableOpacity>
 
         <View style={styles.orderSummary}>
           <View style={styles.summaryRow}>
@@ -124,16 +129,19 @@ export default function CartScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.primary.white,
+    backgroundColor: colors.background.primary,
   },
   header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 50,
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.base,
-    backgroundColor: colors.primary.white,
+    zIndex: 1000,
   },
   backButton: {
     padding: 8,
@@ -143,43 +151,27 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: colors.text.primary,
   },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text.primary,
-    fontFamily: 'Poppins_700Bold',
-  },
-  profileButton: {
-    padding: 8,
-    width: 40,
-    alignItems: 'flex-end',
-  },
-  avatarContainer: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: colors.background.searchBar,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: colors.accent.pink,
+  headerSpacer: {
+    flex: 1,
   },
   scrollView: {
     flex: 1,
+    overflow: 'visible',
   },
   content: {
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.xl,
   },
+  titleSpacer: {
+    height: 100,
+  },
   cartListTitle: {
+    fontFamily: typography.fontFamily.bold,
     fontSize: 28,
     fontWeight: '700',
-    color: colors.text.primary,
-    fontFamily: 'Poppins_700Bold',
+    color: '#000',
+    letterSpacing: -0.5,
+    lineHeight: 34,
     marginBottom: spacing.xl,
   },
   itemsContainer: {
@@ -188,24 +180,40 @@ const styles = StyleSheet.create({
   cartItemCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.card,
-    borderRadius: borderRadius.lg,
-    padding: spacing.base,
     marginBottom: spacing.base,
   },
   itemSeparator: {
     height: spacing.base,
   },
+  imageWrapper: {
+    marginLeft: -10,
+    paddingLeft: 10,
+  },
+  imageShadowContainer: {
+    width: 100,
+    height: 100,
+    borderRadius: borderRadius['2xl'],
+    backgroundColor: colors.primary.white,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
+    marginRight: spacing.base,
+  },
+  imageContainer: {
+    width: '100%',
+    height: '100%',
+    borderRadius: borderRadius['2xl'],
+    overflow: 'hidden',
+  },
   itemThumbnail: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: '100%',
+    height: '100%',
     resizeMode: 'cover',
-    backgroundColor: colors.background.searchBar,
   },
   itemInfo: {
     flex: 1,
-    marginLeft: spacing.base,
   },
   itemName: {
     fontSize: 18,
@@ -215,79 +223,42 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   itemPrice: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.primary,
-    fontFamily: 'Poppins_600SemiBold',
+    fontSize: 14,
+    fontWeight: '500',
+    color: '#666',
+    fontFamily: typography.fontFamily.medium,
   },
   quantitySelector: {
-    width: 32,
-    height: 96,
-    backgroundColor: colors.primary.black,
-    borderRadius: borderRadius.sm,
+    flexDirection: 'column',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 0,
     marginLeft: spacing.sm,
   },
-  quantityButtonTop: {
-    width: '100%',
+  quantityButton: {
+    width: 32,
     height: 32,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 2,
-  },
-  quantityButtonBottom: {
-    width: '100%',
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: 2,
   },
   quantityButtonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text.inverse,
-    fontFamily: 'Poppins_600SemiBold',
-    lineHeight: 18,
+    fontSize: 24,
+    fontWeight: '400',
+    color: colors.text.primary,
+    fontFamily: typography.fontFamily.regular,
   },
   quantityDisplay: {
-    width: '100%',
-    height: 32,
+    width: 40,
+    height: 40,
+    borderRadius: 8,
+    backgroundColor: colors.primary.black,
     justifyContent: 'center',
     alignItems: 'center',
-    flex: 0,
+    marginVertical: spacing.sm,
   },
   quantity: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '700',
     color: colors.text.inverse,
-    fontFamily: 'Poppins_700Bold',
-    lineHeight: 20,
-  },
-  promoSection: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.background.card,
-    borderRadius: borderRadius.lg,
-    padding: spacing.base,
-    marginTop: spacing.base,
-    marginBottom: spacing.xl,
-    gap: spacing.sm,
-  },
-  promoIcon: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: colors.text.primary,
-    width: 24,
-    textAlign: 'center',
-  },
-  promoText: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: colors.text.primary,
-    fontFamily: 'Poppins_500Medium',
-    flex: 1,
+    fontFamily: typography.fontFamily.bold,
   },
   orderSummary: {
     marginTop: spacing.base,
@@ -325,9 +296,7 @@ const styles = StyleSheet.create({
   footer: {
     padding: spacing.screenPadding,
     paddingBottom: 40,
-    backgroundColor: colors.primary.white,
-    borderTopWidth: 1,
-    borderTopColor: colors.border.light,
+    backgroundColor: colors.background.primary,
   },
   checkoutButton: {
     backgroundColor: colors.primary.black,
@@ -348,7 +317,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.primary.white,
+    backgroundColor: colors.background.primary,
   },
   emptyText: {
     fontSize: 18,

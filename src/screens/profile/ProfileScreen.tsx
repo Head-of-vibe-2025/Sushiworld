@@ -1,12 +1,14 @@
 // Profile Screen
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
 import { useRegion } from '../../context/RegionContext';
 import { Button } from '../../components/design-system';
+// Using the same logo URL as MenuScreen
+const SUSHIWORLD_LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/public/assets/logo.png';
 import type { NavigationParamList } from '../../types/app.types';
 
 type ProfileScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Profile'>;
@@ -24,52 +26,42 @@ export default function ProfileScreen() {
   if (!user) {
     return (
       <View style={styles.container}>
-        <View style={styles.guestCard}>
-          <Text style={styles.guestTitle}>Welcome, Guest!</Text>
-          <Text style={styles.guestText}>
-            Create an account to:
-          </Text>
-          <View style={styles.benefitsList}>
-            <Text style={styles.benefitItem}>• View your order history</Text>
-            <Text style={styles.benefitItem}>• Earn and redeem loyalty points</Text>
-            <Text style={styles.benefitItem}>• Claim pending points from previous orders</Text>
-            <Text style={styles.benefitItem}>• Save your preferences</Text>
+        <View style={styles.contentContainer}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={{ uri: SUSHIWORLD_LOGO_URL }}
+              style={styles.logo}
+              resizeMode="contain"
+            />
           </View>
-          <Button
-            title="Create Account"
-            onPress={() => {
-              (navigation as any).navigate('Auth', { screen: 'Signup' });
-            }}
-            variant="primary"
-            fullWidth
-            size="large"
-            style={styles.authButton}
-          />
-          <Button
-            title="Sign In"
-            onPress={() => {
-              (navigation as any).navigate('Auth', { screen: 'Login' });
-            }}
-            variant="secondary"
-            fullWidth
-            size="large"
-            style={styles.authButton}
-          />
-          <TouchableOpacity
-            onPress={() => {
-              (navigation as any).navigate('Menu');
-            }}
-            style={styles.continueButton}
-          >
-            <Text style={styles.continueText}>Continue browsing</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.regionCard}>
-          <Text style={styles.regionLabel}>Region</Text>
-          <Text style={styles.regionValue}>
-            {region === 'BE' ? 'Belgium' : 'Luxembourg'}
+          <Text style={styles.title}>Create an Account</Text>
+          <Text style={styles.subtitle}>
+            Sign in or create an account to manage your profile and preferences
           </Text>
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonWrapper}>
+              <Button
+                title="Create Account"
+                onPress={() => {
+                  (navigation as any).navigate('Auth', { screen: 'Signup' });
+                }}
+                variant="primary"
+                fullWidth
+                size="medium"
+              />
+            </View>
+            <View>
+              <Button
+                title="Sign In"
+                onPress={() => {
+                  (navigation as any).navigate('Auth', { screen: 'Login' });
+                }}
+                variant="secondary"
+                fullWidth
+                size="medium"
+              />
+            </View>
+          </View>
         </View>
       </View>
     );
@@ -151,61 +143,40 @@ const styles = StyleSheet.create({
   signOutButton: {
     marginTop: 30,
   },
-  guestCard: {
-    backgroundColor: '#f8f8f8',
-    padding: 30,
-    borderRadius: 16,
+  contentContainer: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
+  },
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 30,
   },
-  guestTitle: {
-    fontSize: 24,
+  logo: {
+    width: 120,
+    height: 60,
+  },
+  title: {
+    fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
   },
-  guestText: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 15,
-  },
-  benefitsList: {
-    marginBottom: 30,
-    paddingLeft: 10,
-  },
-  benefitItem: {
+  subtitle: {
     fontSize: 16,
-    color: '#666',
-    marginBottom: 8,
-    lineHeight: 24,
-  },
-  authButton: {
-    marginBottom: 12,
-  },
-  regionCard: {
-    backgroundColor: '#f8f8f8',
-    padding: 20,
-    borderRadius: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  regionLabel: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
-  regionValue: {
-    fontSize: 16,
-    color: '#666',
-  },
-  continueButton: {
-    marginTop: 10,
-    padding: 10,
-  },
-  continueText: {
-    fontSize: 14,
     color: '#666',
     textAlign: 'center',
-    textDecorationLine: 'underline',
+    marginBottom: 40,
+    lineHeight: 24,
+    paddingHorizontal: 10,
+  },
+  buttonContainer: {
+    width: '100%',
+  },
+  buttonWrapper: {
+    width: '100%',
+    marginBottom: 16,
   },
 });
 

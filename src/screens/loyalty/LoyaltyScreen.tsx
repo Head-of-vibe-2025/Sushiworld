@@ -1,7 +1,7 @@
 // Loyalty Screen
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
@@ -9,6 +9,8 @@ import { Button } from '../../components/design-system';
 import { formatPoints, pointsToEuros } from '../../utils/formatting';
 import { LOYALTY_CONFIG } from '../../utils/constants';
 import QRCode from 'react-native-qrcode-svg';
+// Using the same logo URL as MenuScreen
+const SUSHIWORLD_LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/public/assets/logo.png';
 import type { NavigationParamList } from '../../types/app.types';
 
 type LoyaltyScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Loyalty'>;
@@ -21,40 +23,42 @@ export default function LoyaltyScreen() {
   if (!user) {
     return (
       <View style={styles.container}>
-        <View style={styles.authPromptCard}>
-          <Text style={styles.authPromptTitle}>Join our loyalty program</Text>
-          <Text style={styles.authPromptText}>
-            Create an account to earn points on every order and redeem rewards. 
-            If you've already ordered, your pending points will be automatically added to your account!
+        <View style={styles.contentContainer}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={{ uri: SUSHIWORLD_LOGO_URL }}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+          <Text style={styles.title}>Join our Loyalty Program</Text>
+          <Text style={styles.subtitle}>
+            Create an account to earn points on every order and redeem rewards
           </Text>
-          <Button
-            title="Create Account"
-            onPress={() => {
-              (navigation as any).navigate('Auth', { screen: 'Signup' });
-            }}
-            variant="primary"
-            fullWidth
-            size="large"
-            style={styles.authButton}
-          />
-          <Button
-            title="Sign In"
-            onPress={() => {
-              (navigation as any).navigate('Auth', { screen: 'Login' });
-            }}
-            variant="secondary"
-            fullWidth
-            size="large"
-            style={styles.authButton}
-          />
-          <TouchableOpacity
-            onPress={() => {
-              (navigation as any).navigate('Menu');
-            }}
-            style={styles.continueButton}
-          >
-            <Text style={styles.continueText}>Continue browsing</Text>
-          </TouchableOpacity>
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonWrapper}>
+              <Button
+                title="Create Account"
+                onPress={() => {
+                  (navigation as any).navigate('Auth', { screen: 'Signup' });
+                }}
+                variant="primary"
+                fullWidth
+                size="medium"
+              />
+            </View>
+            <View>
+              <Button
+                title="Sign In"
+                onPress={() => {
+                  (navigation as any).navigate('Auth', { screen: 'Login' });
+                }}
+                variant="secondary"
+                fullWidth
+                size="medium"
+              />
+            </View>
+          </View>
         </View>
       </View>
     );
@@ -205,38 +209,40 @@ const styles = StyleSheet.create({
   historyButton: {
     marginTop: 0,
   },
-  authPromptCard: {
-    backgroundColor: '#f8f8f8',
-    padding: 30,
-    borderRadius: 16,
-    alignItems: 'center',
-    marginTop: 60,
+  contentContainer: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
   },
-  authPromptTitle: {
-    fontSize: 24,
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 30,
+  },
+  logo: {
+    width: 120,
+    height: 60,
+  },
+  title: {
+    fontSize: 32,
     fontWeight: 'bold',
     marginBottom: 15,
     textAlign: 'center',
   },
-  authPromptText: {
+  subtitle: {
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
-    marginBottom: 30,
+    marginBottom: 40,
     lineHeight: 24,
+    paddingHorizontal: 10,
   },
-  authButton: {
-    marginBottom: 12,
+  buttonContainer: {
+    width: '100%',
   },
-  continueButton: {
-    marginTop: 10,
-    padding: 10,
-  },
-  continueText: {
-    fontSize: 14,
-    color: '#666',
-    textAlign: 'center',
-    textDecorationLine: 'underline',
+  buttonWrapper: {
+    width: '100%',
+    marginBottom: 16,
   },
 });
 

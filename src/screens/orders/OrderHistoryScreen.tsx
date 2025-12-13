@@ -1,12 +1,14 @@
 // Order History Screen
 
 import React from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/design-system';
 import { formatPrice, formatDate } from '../../utils/formatting';
+// Using the same logo URL as MenuScreen
+const SUSHIWORLD_LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/public/assets/logo.png';
 import type { NavigationParamList } from '../../types/app.types';
 
 type OrderHistoryScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Orders'>;
@@ -18,41 +20,44 @@ export default function OrderHistoryScreen() {
   // If user is not authenticated, show sign-in prompt
   if (!user) {
     return (
-      <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>Sign in to view your orders</Text>
-        <Text style={styles.emptySubtext}>
-          Create an account or sign in to see your order history and track your loyalty points
-        </Text>
-        <View style={styles.buttonContainer}>
-          <Button
-            title="Create Account"
-            onPress={() => {
-              (navigation as any).navigate('Auth', { screen: 'Signup' });
-            }}
-            variant="primary"
-            fullWidth
-            size="large"
-            style={styles.button}
-          />
-          <Button
-            title="Sign In"
-            onPress={() => {
-              (navigation as any).navigate('Auth', { screen: 'Login' });
-            }}
-            variant="secondary"
-            fullWidth
-            size="large"
-            style={styles.button}
-          />
+      <View style={styles.container}>
+        <View style={styles.contentContainer}>
+          <View style={styles.logoContainer}>
+            <Image
+              source={{ uri: SUSHIWORLD_LOGO_URL }}
+              style={styles.logo}
+              resizeMode="contain"
+            />
+          </View>
+          <Text style={styles.title}>Order History</Text>
+          <Text style={styles.subtitle}>
+            Sign in or create an account to view your order history
+          </Text>
+          <View style={styles.buttonContainer}>
+            <View style={styles.buttonWrapper}>
+              <Button
+                title="Create Account"
+                onPress={() => {
+                  (navigation as any).navigate('Auth', { screen: 'Signup' });
+                }}
+                variant="primary"
+                fullWidth
+                size="medium"
+              />
+            </View>
+            <View>
+              <Button
+                title="Sign In"
+                onPress={() => {
+                  (navigation as any).navigate('Auth', { screen: 'Login' });
+                }}
+                variant="secondary"
+                fullWidth
+                size="medium"
+              />
+            </View>
+          </View>
         </View>
-        <TouchableOpacity
-          onPress={() => {
-            (navigation as any).navigate('Menu');
-          }}
-          style={styles.continueButton}
-        >
-          <Text style={styles.continueText}>Continue browsing</Text>
-        </TouchableOpacity>
       </View>
     );
   }
@@ -167,23 +172,40 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     paddingHorizontal: 20,
   },
-  buttonContainer: {
-    width: '100%',
-    maxWidth: 400,
-    gap: 12,
+  contentContainer: {
+    flex: 1,
+    padding: 20,
+    justifyContent: 'center',
   },
-  button: {
-    marginBottom: 0,
+  logoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 30,
   },
-  continueButton: {
-    marginTop: 20,
-    padding: 10,
+  logo: {
+    width: 120,
+    height: 60,
   },
-  continueText: {
-    fontSize: 14,
+  title: {
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  subtitle: {
+    fontSize: 16,
     color: '#666',
     textAlign: 'center',
-    textDecorationLine: 'underline',
+    marginBottom: 40,
+    lineHeight: 24,
+    paddingHorizontal: 10,
+  },
+  buttonContainer: {
+    width: '100%',
+  },
+  buttonWrapper: {
+    width: '100%',
+    marginBottom: 16,
   },
 });
 

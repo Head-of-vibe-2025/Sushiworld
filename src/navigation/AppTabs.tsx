@@ -59,16 +59,20 @@ function MenuStack() {
 // Orders Stack
 function OrdersStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
         name="Orders"
         component={OrderHistoryScreen}
-        options={{ title: 'Order History' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="OrderDetail"
         component={OrderDetailScreen}
-        options={{ title: 'Order Details' }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
@@ -77,21 +81,25 @@ function OrdersStack() {
 // Loyalty Stack
 function LoyaltyStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
         name="Loyalty"
         component={LoyaltyScreen}
-        options={{ title: 'Loyalty' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="RedeemPoints"
         component={RedeemPointsScreen}
-        options={{ title: 'Redeem Points' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="PointsHistory"
         component={PointsHistoryScreen}
-        options={{ title: 'Points History' }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );
@@ -100,26 +108,30 @@ function LoyaltyStack() {
 // Profile Stack
 function ProfileStack() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen
         name="Profile"
         component={ProfileScreen}
-        options={{ title: 'Profile' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Preferences"
         component={PreferencesScreen}
-        options={{ title: 'Preferences' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}
-        options={{ title: 'Settings' }}
+        options={{ headerShown: false }}
       />
       <Stack.Screen
         name="DesignSystemPreview"
         component={DesignSystemPreviewScreen}
-        options={{ title: 'Design System Preview' }}
+        options={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

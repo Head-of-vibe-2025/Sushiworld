@@ -205,8 +205,16 @@ export default function MenuScreen() {
         activeOpacity={0.9}
       >
         <View style={styles.productImageContainer}>
-          {item.image && (
-            <Image source={{ uri: item.image }} style={styles.productImage} />
+          {item.image ? (
+            <Image 
+              source={{ uri: item.image }} 
+              style={styles.productImage}
+              onError={() => console.log(`Failed to load image for ${item.name}`)}
+            />
+          ) : (
+            <View style={styles.placeholderImage}>
+              <Text style={styles.placeholderText}>No Image</Text>
+            </View>
           )}
         </View>
         <View style={styles.productInfo}>
@@ -229,7 +237,9 @@ export default function MenuScreen() {
     return (
       <View style={styles.centerContainer}>
         <Text style={styles.errorText}>Failed to load menu</Text>
-        <Text style={styles.errorSubtext}>{error.message}</Text>
+        <Text style={styles.errorSubtext}>
+          {error instanceof Error ? error.message : String(error)}
+        </Text>
       </View>
     );
   }
@@ -438,6 +448,18 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     resizeMode: 'cover',
+  },
+  placeholderImage: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#E5E5E5',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  placeholderText: {
+    fontSize: 12,
+    color: '#999',
+    fontWeight: '400',
   },
   productInfo: {
     padding: spacing.base,

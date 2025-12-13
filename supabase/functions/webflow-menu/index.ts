@@ -66,18 +66,34 @@ serve(async (req) => {
       );
     }
 
-    // If requesting categories
+    // If requesting categories (with pagination to get all)
     if (url.searchParams.has('categories')) {
-      const { data: categories, error } = await supabase
-        .from('menu_categories')
-        .select('*')
-        .order('name');
+      const allCategories: any[] = [];
+      let page = 0;
+      const pageSize = 1000;
+      let hasMore = true;
 
-      if (error) {
-        throw new Error(`Database error: ${error.message}`);
+      while (hasMore) {
+        const { data: categories, error } = await supabase
+          .from('menu_categories')
+          .select('*')
+          .range(page * pageSize, (page + 1) * pageSize - 1)
+          .order('name');
+
+        if (error) {
+          throw new Error(`Database error: ${error.message}`);
+        }
+
+        if (categories && categories.length > 0) {
+          allCategories.push(...categories);
+          hasMore = categories.length === pageSize;
+          page++;
+        } else {
+          hasMore = false;
+        }
       }
 
-      const mappedCategories = (categories || []).map((cat) => ({
+      const mappedCategories = allCategories.map((cat) => ({
         id: cat.webflow_id,
         name: cat.name,
         code: cat.code,
@@ -91,34 +107,53 @@ serve(async (req) => {
       );
     }
 
-    // Fetch menu items with filters
-    let query = supabase
-      .from('menu_items')
-      .select(`
-        *,
-        menu_categories (
-          id,
-          name,
-          code
-        )
-      `)
-      .eq('is_available', true);
+    // Fetch menu items with filters (with pagination to get all items)
+    const allItems: any[] = [];
+    let page = 0;
+    const pageSize = 1000; // Supabase default max, but we'll paginate to be safe
+    let hasMore = true;
 
-    // Filter by region
-    if (region) {
-      query = query.or(`region.eq.${region},region.eq.BOTH`);
+    while (hasMore) {
+      let query = supabase
+        .from('menu_items')
+        .select(`
+          *,
+          menu_categories (
+            id,
+            name,
+            code
+          )
+        `)
+        .eq('is_available', true)
+        .range(page * pageSize, (page + 1) * pageSize - 1)
+        .order('name');
+
+      // Filter by region - items that match the region or are available for BOTH
+      if (region) {
+        query = query.or(`region.eq.${region},region.eq.BOTH`);
+      }
+
+      // Filter by category if specified
+      if (categoryId) {
+        query = query.eq('category_webflow_id', categoryId);
+      }
+
+      const { data: items, error } = await query;
+
+      if (error) {
+        throw new Error(`Database error: ${error.message}`);
+      }
+
+      if (items && items.length > 0) {
+        allItems.push(...items);
+        hasMore = items.length === pageSize;
+        page++;
+      } else {
+        hasMore = false;
+      }
     }
 
-    // Filter by category if specified
-    if (categoryId) {
-      query = query.eq('category_webflow_id', categoryId);
-    }
-
-    const { data: items, error } = await query.order('name');
-
-    if (error) {
-      throw new Error(`Database error: ${error.message}`);
-    }
+    const items = allItems;
 
     // Map to app format
     const mappedItems = (items || []).map((item) => ({

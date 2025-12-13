@@ -32,5 +32,5 @@ export const FOXY_SUBDOMAINS = {
 
 // Logo URL - should be public or use environment variable
 // If using Supabase Storage, use a public URL or generate signed URLs server-side
-export const LOGO_URL = process.env.EXPO_PUBLIC_LOGO_URL || 'https://via.placeholder.com/200x60?text=Sushi+World';
+export const LOGO_URL = process.env.EXPO_PUBLIC_LOGO_URL || 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/public/assets/logo.png';
 

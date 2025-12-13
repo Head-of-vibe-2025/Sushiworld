@@ -23,46 +23,14 @@ export default function AuthStack() {
         name="Login"
         component={LoginScreen}
         options={({ navigation }) => ({
-          title: 'Sign In',
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => {
-                // Navigate back to Root stack
-                const parent = navigation.getParent();
-                if (parent) {
-                  parent.goBack();
-                } else {
-                  (navigation as any).navigate('Root');
-                }
-              }}
-              style={{ marginLeft: 10, padding: 10 }}
-            >
-              <Text style={{ color: '#fff', fontSize: 16 }}>Cancel</Text>
-            </TouchableOpacity>
-          ),
+          headerShown: false,
         })}
       />
       <Stack.Screen
         name="Signup"
         component={SignupScreen}
-        options={({ navigation }) => ({
-          title: 'Create Account',
-          headerLeft: () => (
-            <TouchableOpacity
-              onPress={() => {
-                // Navigate back to Root stack
-                const parent = navigation.getParent();
-                if (parent) {
-                  parent.goBack();
-                } else {
-                  (navigation as any).navigate('Root');
-                }
-              }}
-              style={{ marginLeft: 10, padding: 10 }}
-            >
-              <Text style={{ color: '#fff', fontSize: 16 }}>Cancel</Text>
-            </TouchableOpacity>
-          ),
+        options={() => ({
+          headerShown: false,
         })}
       />
     </Stack.Navigator>
