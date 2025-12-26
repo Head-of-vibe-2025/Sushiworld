@@ -22,15 +22,22 @@ export const spacing = {
   navigationBarHeight: 64,
 } as const;
 
-export const colors = {
+// Base color definitions (theme-agnostic)
+const baseColors = {
   primary: {
     black: '#000000',
     white: '#FFFFFF',
   },
   accent: {
     green: '#4ADE80',
-    pink: '#F472B6',
+    pink: '#EA3886',
   },
+} as const;
+
+// Light theme colors
+const lightColors = {
+  primary: baseColors.primary,
+  accent: baseColors.accent,
   background: {
     primary: '#F6F6F6', // App background color
     secondary: '#F9FAFB',
@@ -53,9 +60,47 @@ export const colors = {
   shadow: {
     color: 'rgba(0, 0, 0, 0.05)', // Very subtle shadows
     glowGreen: 'rgba(74, 222, 128, 0.2)',
-    glowPink: 'rgba(244, 114, 182, 0.2)',
+    glowPink: 'rgba(234, 56, 134, 0.2)',
   },
 } as const;
+
+// Dark theme colors
+const darkColors = {
+  primary: baseColors.primary,
+  accent: baseColors.accent,
+  background: {
+    primary: '#121212', // Dark app background
+    secondary: '#1E1E1E',
+    card: '#1F1F1F', // Dark card background
+    navigation: '#1F1F1F', // Dark navigation bar
+    searchBar: '#2A2A2A', // Dark gray for search bar
+  },
+  text: {
+    primary: '#FFFFFF', // White text
+    secondary: '#B0B0B0', // Light gray
+    tertiary: '#808080', // Medium gray
+    inverse: '#000000',
+    link: '#FFFFFF',
+  },
+  border: {
+    light: '#333333',
+    medium: '#404040',
+    dark: '#FFFFFF',
+  },
+  shadow: {
+    color: 'rgba(0, 0, 0, 0.3)', // Darker shadows for dark mode
+    glowGreen: 'rgba(74, 222, 128, 0.3)',
+    glowPink: 'rgba(234, 56, 134, 0.3)',
+  },
+} as const;
+
+// Export function to get colors based on theme
+export const getColors = (isDark: boolean) => {
+  return isDark ? darkColors : lightColors;
+};
+
+// Export default light colors for backward compatibility
+export const colors = lightColors;
 
 export const borderRadius = {
   none: 0,
@@ -148,63 +193,77 @@ export const typography = {
   },
 } as const;
 
-export const shadows = {
-  none: {},
-  sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.03,
-    shadowRadius: 2,
-    elevation: 1,
-  },
-  md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.08,
-    shadowRadius: 12,
-    elevation: 4,
-  },
-  glowGreen: {
-    shadowColor: colors.accent.green,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 5,
-  },
-  glowPink: {
-    shadowColor: colors.accent.pink,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 20,
-    elevation: 5,
-  },
-} as const;
+// Export function to get shadows based on theme
+export const getShadows = (isDark: boolean) => {
+  const shadowColor = isDark ? '#000' : '#000';
+  return {
+    none: {},
+    sm: {
+      shadowColor,
+      shadowOffset: { width: 0, height: 1 },
+      shadowOpacity: isDark ? 0.3 : 0.03,
+      shadowRadius: 2,
+      elevation: 1,
+    },
+    md: {
+      shadowColor,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: isDark ? 0.4 : 0.05,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    lg: {
+      shadowColor,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: isDark ? 0.5 : 0.08,
+      shadowRadius: 12,
+      elevation: 4,
+    },
+    glowGreen: {
+      shadowColor: baseColors.accent.green,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.3,
+      shadowRadius: 20,
+      elevation: 5,
+    },
+    glowPink: {
+      shadowColor: baseColors.accent.pink,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.3,
+      shadowRadius: 20,
+      elevation: 5,
+    },
+  } as const;
+};
 
-export const borders = {
-  none: {
-    borderWidth: 0,
-  },
-  card: {
-    borderWidth: 1,
-    borderColor: colors.border.light,
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: colors.border.medium,
-  },
-  separator: {
-    borderWidth: 1,
-    borderColor: colors.border.medium,
-    borderStyle: 'dashed' as const,
-  },
-} as const;
+// Export default light shadows for backward compatibility
+export const shadows = getShadows(false);
+
+// Export function to get borders based on theme
+export const getBorders = (isDark: boolean) => {
+  const themeColors = getColors(isDark);
+  return {
+    none: {
+      borderWidth: 0,
+    },
+    card: {
+      borderWidth: 1,
+      borderColor: themeColors.border.light,
+    },
+    input: {
+      borderWidth: 1,
+      borderColor: themeColors.border.medium,
+    },
+    separator: {
+      borderWidth: 1,
+      borderColor: themeColors.border.medium,
+      borderStyle: 'dashed' as const,
+    },
+  } as const;
+};
+
+// Export default light borders for backward compatibility
+export const borders = getBorders(false);
 
 export const iconSizes = {
   sm: 16,

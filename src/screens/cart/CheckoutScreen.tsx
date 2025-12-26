@@ -6,14 +6,14 @@ import { BlurView } from 'expo-blur';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import * as WebBrowser from 'expo-web-browser';
+import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { useRegion } from '../../context/RegionContext';
 import { useAuth } from '../../context/AuthContext';
 import { buildFoxyCheckoutUrl, buildCheckoutParamsFromCart } from '../../services/foxy/foxyCheckout';
 import { formatPrice } from '../../utils/formatting';
 import { isValidEmail } from '../../utils/validation';
-import { spacing, colors, borderRadius, typography } from '../../theme/designTokens';
+import { spacing, getColors, getBorders, borderRadius, typography } from '../../theme/designTokens';
 import type { NavigationParamList } from '../../types/app.types';
 
 type CheckoutScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Checkout'>;
@@ -21,6 +21,9 @@ type CheckoutScreenNavigationProp = NativeStackNavigationProp<NavigationParamLis
 export default function CheckoutScreen() {
   const navigation = useNavigation<CheckoutScreenNavigationProp>();
   const insets = useSafeAreaInsets();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const borders = getBorders(isDark);
   const { items, getTotal, clearCart } = useCart();
   const { region } = useRegion();
   const { user } = useAuth();
@@ -53,25 +56,9 @@ export default function CheckoutScreen() {
       const checkoutUrl = buildFoxyCheckoutUrl(region, checkoutParams);
       console.log('🌐 Final checkout URL:', checkoutUrl);
 
-      const result = await WebBrowser.openBrowserAsync(checkoutUrl);
-
-      if (result.type === 'dismiss') {
-        // User closed the browser - check if order was completed
-        // In production, this would be handled by webhook
-        Alert.alert(
-          'Order Placed',
-          'Your order has been received. You will receive a confirmation email shortly.',
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                clearCart();
-                navigation.goBack();
-              },
-            },
-          ]
-        );
-      }
+      // Navigate to custom WebView screen instead of opening external browser
+      // This avoids the double navigation issue (Safari controls + FoxyCart UI)
+      navigation.navigate('FoxyCheckout', { checkoutUrl });
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Could not open checkout');
     } finally {
@@ -80,17 +67,17 @@ export default function CheckoutScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <BlurView
         intensity={80}
-        tint="light"
+        tint={isDark ? 'dark' : 'light'}
         style={[styles.header, { paddingTop: insets.top + spacing.screenPadding }]}
       >
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backIcon}>←</Text>
+          <Text style={[styles.backIcon, { color: colors.text.primary }]}>←</Text>
         </TouchableOpacity>
         <View style={styles.headerSpacer} />
       </BlurView>
@@ -102,50 +89,50 @@ export default function CheckoutScreen() {
         contentInsetAdjustmentBehavior="automatic"
       >
         <View style={styles.titleSpacer} />
-        <Text style={styles.pageTitle}>Order Summary</Text>
+        <Text style={[styles.pageTitle, { color: colors.text.primary }]}>Order Summary</Text>
         
         <View style={styles.summary}>
           {items.map((item) => (
             <View key={item.id} style={styles.summaryRow}>
-              <Text style={styles.summaryItem}>
+              <Text style={[styles.summaryItem, { color: colors.text.secondary }]}>
                 {item.name} x{item.quantity}
               </Text>
-              <Text style={styles.summaryPrice}>
+              <Text style={[styles.summaryPrice, { color: colors.text.primary }]}>
                 {formatPrice(item.price * item.quantity)}
               </Text>
             </View>
           ))}
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Total:</Text>
-            <Text style={styles.totalAmount}>{formatPrice(getTotal())}</Text>
+            <Text style={[styles.totalLabel, { color: colors.text.primary }]}>Total:</Text>
+            <Text style={[styles.totalAmount, { color: colors.accent.pink }]}>{formatPrice(getTotal())}</Text>
           </View>
         </View>
 
         <View style={styles.form}>
-          <Text style={styles.label}>Email Address (Optional)</Text>
+          <Text style={[styles.label, { color: colors.text.primary }]}>Email Address (Optional)</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: colors.background.searchBar, borderColor: borders.input.borderColor, color: colors.text.primary }]}
             placeholder="your@email.com (optional)"
+            placeholderTextColor={colors.text.tertiary}
             value={email}
             onChangeText={setEmail}
             keyboardType="email-address"
             autoCapitalize="none"
-            placeholderTextColor={colors.text.tertiary}
           />
-          <Text style={styles.hint}>
+          <Text style={[styles.hint, { color: colors.text.secondary }]}>
             Optional: Add your email for order updates, or continue as guest. Create an account after checkout to earn loyalty points!
           </Text>
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.background.card }]}>
         <TouchableOpacity
-          style={[styles.checkoutButton, loading && styles.checkoutButtonDisabled]}
+          style={[styles.checkoutButton, { backgroundColor: isDark ? colors.primary.white : colors.primary.black }, loading && styles.checkoutButtonDisabled]}
           onPress={handleCheckout}
           disabled={loading}
           activeOpacity={0.8}
         >
-          <Text style={styles.checkoutButtonText}>
+          <Text style={[styles.checkoutButtonText, { color: isDark ? colors.primary.black : colors.text.inverse }]}>
             {loading ? 'Processing...' : 'Continue to Payment'}
           </Text>
         </TouchableOpacity>
@@ -157,7 +144,6 @@ export default function CheckoutScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.background.primary,
   },
   header: {
     position: 'absolute',
@@ -177,7 +163,6 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: colors.text.primary,
   },
   headerSpacer: {
     flex: 1,
@@ -193,7 +178,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.bold,
     fontSize: 28,
     fontWeight: '700',
-    color: '#000',
     letterSpacing: -0.5,
     lineHeight: 34,
     marginBottom: spacing.xl,
@@ -215,14 +199,12 @@ const styles = StyleSheet.create({
   },
   summaryItem: {
     fontSize: typography.fontSizes.base,
-    color: colors.text.secondary,
     fontFamily: typography.fontFamily.regular,
     flex: 1,
   },
   summaryPrice: {
     fontSize: typography.fontSizes.base,
     fontWeight: typography.fontWeights.semibold,
-    color: colors.text.primary,
     fontFamily: typography.fontFamily.semibold,
     textAlign: 'right',
   },
@@ -236,13 +218,11 @@ const styles = StyleSheet.create({
   totalLabel: {
     fontSize: typography.fontSizes.lg,
     fontWeight: typography.fontWeights.bold,
-    color: colors.text.primary,
     fontFamily: typography.fontFamily.bold,
   },
   totalAmount: {
     fontSize: typography.fontSizes['2xl'],
     fontWeight: typography.fontWeights.bold,
-    color: '#EA3886',
     fontFamily: typography.fontFamily.bold,
   },
   form: {
@@ -252,34 +232,27 @@ const styles = StyleSheet.create({
   label: {
     fontSize: typography.fontSizes.base,
     fontWeight: typography.fontWeights.bold,
-    color: colors.text.primary,
     fontFamily: typography.fontFamily.bold,
     marginBottom: spacing.base,
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.border.light,
     borderRadius: borderRadius.lg,
     padding: spacing.base,
     fontSize: typography.fontSizes.base,
-    backgroundColor: colors.background.searchBar,
-    color: colors.text.primary,
     fontFamily: typography.fontFamily.regular,
     marginBottom: spacing.sm,
   },
   hint: {
     fontSize: typography.fontSizes.sm,
-    color: colors.text.secondary,
     fontFamily: typography.fontFamily.regular,
     lineHeight: typography.lineHeights.relaxed * typography.fontSizes.sm,
   },
   footer: {
     padding: spacing.screenPadding,
     paddingBottom: 40,
-    backgroundColor: colors.primary.white,
   },
   checkoutButton: {
-    backgroundColor: colors.primary.black,
     borderRadius: borderRadius.full,
     paddingVertical: spacing.base + 4,
     paddingHorizontal: spacing.xl,
@@ -293,7 +266,6 @@ const styles = StyleSheet.create({
   checkoutButtonText: {
     fontSize: 18,
     fontWeight: '600',
-    color: colors.text.inverse,
     fontFamily: 'Poppins_600SemiBold',
   },
 });

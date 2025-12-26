@@ -25,16 +25,19 @@ export interface NavigationParamList {
   ProductDetail: { productId: string };
   Cart: undefined;
   Checkout: undefined;
+  FoxyCheckout: { checkoutUrl: string };
   Orders: undefined;
   OrderDetail: { orderId: string };
+  Bookings: undefined;
   Loyalty: undefined;
   RedeemPoints: undefined;
   PointsHistory: undefined;
   Profile: undefined;
-  Preferences: undefined;
   Settings: undefined;
   Login: undefined;
   Signup: undefined;
+  ForgotPassword: undefined;
+  ResetPassword: { token?: string };
   GuestCheckout: undefined;
   DesignSystemPreview: undefined;
 }

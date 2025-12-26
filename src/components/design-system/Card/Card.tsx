@@ -3,7 +3,8 @@
 
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity, ViewStyle } from 'react-native';
-import { colors, borderRadius, shadows, spacing, borders } from '../../../theme/designTokens';
+import { useTheme } from '../../../context/ThemeContext';
+import { getColors, borderRadius, getShadows, spacing, getBorders } from '../../../theme/designTokens';
 
 export interface CardProps {
   children: React.ReactNode;
@@ -20,10 +21,16 @@ export default function Card({
   variant = 'default',
   testID,
 }: CardProps) {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const shadows = getShadows(isDark);
+  const borders = getBorders(isDark);
+  
   const cardStyles = [
     styles.card,
-    variant === 'elevated' && styles.elevated,
-    variant === 'outlined' && styles.outlined,
+    { backgroundColor: colors.background.card },
+    variant === 'elevated' && shadows.md,
+    variant === 'outlined' && borders.card,
     style,
   ];
 
@@ -49,15 +56,8 @@ export default function Card({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: colors.background.card,
     borderRadius: borderRadius.productCard,
     padding: spacing.cardPadding,
-  },
-  elevated: {
-    ...shadows.md,
-  },
-  outlined: {
-    ...borders.card,
   },
 });
 

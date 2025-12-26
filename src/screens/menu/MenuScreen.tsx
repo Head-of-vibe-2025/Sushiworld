@@ -9,11 +9,12 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useCart } from '../../context/CartContext';
 import { useRegion } from '../../context/RegionContext';
+import { useTheme } from '../../context/ThemeContext';
 import { useMenuItems, useCategories } from '../../hooks/useFoxyProducts';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { SearchBar, FilterTag } from '../../components/design-system';
 import { formatPrice } from '../../utils/formatting';
-import { spacing, colors, typography } from '../../theme/designTokens';
+import { spacing, getColors, typography } from '../../theme/designTokens';
 import type { NavigationParamList } from '../../types/app.types';
 import type { WebflowMenuItem } from '../../types/webflow.types';
 
@@ -23,8 +24,8 @@ type MenuScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, '
 
 const SUSHIWORLD_LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/public/assets/logo.png';
 
-// Bag 6 Icon Component (for cart button)
-const Bag6Icon = ({ color = '#000000', size = 32 }: { color?: string; size?: number }) => (
+// Bag 6 Icon Component (for cart button) - now theme-aware
+const Bag6Icon = ({ color, size = 32 }: { color?: string; size?: number }) => (
   <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
     <Path
       d="M3.79418 14.9709C4.33135 17.6567 4.59993 18.9996 5.4874 19.8646C5.65142 20.0244 5.82888 20.1699 6.0178 20.2994C7.03998 21 8.4095 21 11.1485 21H12.8515C15.5905 21 16.96 21 17.9822 20.2994C18.1711 20.1699 18.3486 20.0244 18.5126 19.8646C19.4001 18.9996 19.6687 17.6567 20.2058 14.9709C20.977 11.1149 21.3626 9.18686 20.475 7.82067C20.3142 7.5733 20.1266 7.34447 19.9156 7.13836C18.75 6 16.7838 6 12.8515 6H11.1485C7.21616 6 5.24998 6 4.0844 7.13836C3.87336 7.34447 3.68576 7.5733 3.52504 7.82067C2.63738 9.18686 3.02298 11.1149 3.79418 14.9709Z"
@@ -70,6 +71,8 @@ export default function MenuScreen() {
   const insets = useSafeAreaInsets();
   const { getItemCount, items, addItem, updateQuantity } = useCart();
   const { region } = useRegion();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
   const [selectedCategory, setSelectedCategory] = useState<string | undefined>(undefined);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -109,10 +112,10 @@ export default function MenuScreen() {
 
   const renderHeader = () => (
     <>
-      <View style={styles.headerContent}>
+      <View style={[styles.headerContent, { backgroundColor: colors.background.primary }]}>
         <View style={styles.titleContainer}>
-          <Text style={styles.titleLine1}>Sushi lover?</Text>
-          <Text style={styles.titleLine2}>Order & Eat.</Text>
+          <Text style={[styles.titleLine1, { color: colors.text.primary }]}>Sushi lover?</Text>
+          <Text style={[styles.titleLine2, { color: colors.text.primary }]}>Order & Eat.</Text>
         </View>
         <View style={styles.searchContainer}>
           <SearchBar
@@ -125,12 +128,12 @@ export default function MenuScreen() {
       </View>
 
       {activeFilters.length > 0 && (
-        <View style={styles.activeFiltersContainer}>
-          <Text style={styles.discoverFoodText}>Discover food</Text>
+        <View style={[styles.activeFiltersContainer, { backgroundColor: colors.background.primary }]}>
+          <Text style={[styles.discoverFoodText, { color: colors.text.primary }]}>Discover food</Text>
           <FlatList
             horizontal
-            data={activeFilters.map(id => categories?.find(c => c.id === id)).filter(Boolean)}
-            renderItem={({ item }) => item && (
+            data={activeFilters.map(id => categories?.find(c => c.id === id)).filter((item): item is NonNullable<typeof item> => Boolean(item))}
+            renderItem={({ item }) => (
               <FilterTag
                 label={`${item.name} X`}
                 showClose
@@ -138,7 +141,7 @@ export default function MenuScreen() {
                 active
               />
             )}
-            keyExtractor={(item) => item?.id || ''}
+            keyExtractor={(item) => item.id}
             contentContainerStyle={styles.activeFiltersList}
             showsHorizontalScrollIndicator={false}
           />
@@ -146,8 +149,8 @@ export default function MenuScreen() {
       )}
 
       {categories && categories.length > 0 && !activeFilters.length && (
-        <View style={styles.categoryContainer}>
-          <Text style={styles.discoverFoodText}>Discover food</Text>
+        <View style={[styles.categoryContainer, { backgroundColor: colors.background.primary }]}>
+          <Text style={[styles.discoverFoodText, { color: colors.text.primary }]}>Discover food</Text>
           <FlatList
             horizontal
             data={categories}
@@ -200,7 +203,7 @@ export default function MenuScreen() {
     
     return (
       <TouchableOpacity
-        style={styles.productCard}
+        style={[styles.productCard, { backgroundColor: colors.background.card }]}
         onPress={() => navigation.navigate('ProductDetail', { productId: item.id })}
         activeOpacity={0.9}
       >
@@ -212,14 +215,14 @@ export default function MenuScreen() {
               onError={() => console.log(`Failed to load image for ${item.name}`)}
             />
           ) : (
-            <View style={styles.placeholderImage}>
-              <Text style={styles.placeholderText}>No Image</Text>
+            <View style={[styles.placeholderImage, { backgroundColor: colors.border.light }]}>
+              <Text style={[styles.placeholderText, { color: colors.text.tertiary }]}>No Image</Text>
             </View>
           )}
         </View>
         <View style={styles.productInfo}>
-          <Text style={styles.productName}>{item.name}</Text>
-          <Text style={styles.productPrice}>{formatPrice(item.price)}</Text>
+          <Text style={[styles.productName, { color: colors.text.primary }]}>{item.name}</Text>
+          <Text style={[styles.productPrice, { color: colors.text.secondary }]}>{formatPrice(item.price)}</Text>
         </View>
       </TouchableOpacity>
     );
@@ -227,7 +230,7 @@ export default function MenuScreen() {
 
   if (categoriesLoading || itemsLoading) {
     return (
-      <View style={styles.centerContainer}>
+      <View style={[styles.centerContainer, { backgroundColor: colors.background.primary }]}>
         <LoadingSpinner />
       </View>
     );
@@ -235,9 +238,9 @@ export default function MenuScreen() {
 
   if (error) {
     return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>Failed to load menu</Text>
-        <Text style={styles.errorSubtext}>
+      <View style={[styles.centerContainer, { backgroundColor: colors.background.primary }]}>
+        <Text style={[styles.errorText, { color: colors.accent.pink }]}>Failed to load menu</Text>
+        <Text style={[styles.errorSubtext, { color: colors.text.secondary }]}>
           {error instanceof Error ? error.message : String(error)}
         </Text>
       </View>
@@ -248,11 +251,11 @@ export default function MenuScreen() {
   const headerTopOffset = insets.top + spacing.screenPadding + 40 - spacing.base; // safe area + padding + logo height - more reduced spacing
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <BlurView
         intensity={80}
-        tint="light"
-        style={[styles.stickyHeader, { paddingTop: insets.top + spacing.screenPadding }]}
+        tint={isDark ? 'dark' : 'light'}
+        style={[styles.stickyHeader, { paddingTop: insets.top + spacing.screenPadding, backgroundColor: isDark ? 'rgba(31, 31, 31, 0.4)' : 'rgba(246, 246, 246, 0.4)' }]}
       >
         <TouchableOpacity
           style={styles.logoButton}
@@ -268,10 +271,10 @@ export default function MenuScreen() {
           style={styles.cartButton}
           onPress={() => navigation.navigate('Cart')}
         >
-          <Bag6Icon color="#000000" size={32} />
+          <Bag6Icon color={colors.text.primary} size={32} />
           {getItemCount() > 0 && (
-            <View style={styles.cartBadge}>
-              <Text style={styles.cartBadgeText}>
+            <View style={[styles.cartBadge, { backgroundColor: colors.accent.pink }]}>
+              <Text style={[styles.cartBadgeText, { color: colors.text.inverse }]}>
                 {getItemCount() > 99 ? '99+' : getItemCount().toString()}
               </Text>
             </View>
@@ -289,7 +292,7 @@ export default function MenuScreen() {
         contentInsetAdjustmentBehavior="automatic"
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>
+            <Text style={[styles.emptyText, { color: colors.text.secondary }]}>
               {searchQuery ? 'No items found' : 'No items available'}
             </Text>
           </View>
@@ -302,13 +305,11 @@ export default function MenuScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
   },
   stickyHeader: {
     position: 'absolute',
@@ -320,13 +321,11 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingHorizontal: spacing.screenPadding,
     paddingBottom: spacing.base,
-    backgroundColor: 'rgba(246, 246, 246, 0.4)',
     zIndex: 1000,
   },
   headerContent: {
     paddingTop: 0,
     paddingBottom: spacing.base,
-    backgroundColor: '#F6F6F6',
   },
   headerTop: {
     flexDirection: 'row',
@@ -354,7 +353,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.bold,
     fontSize: 28,
     fontWeight: '700',
-    color: '#000',
     letterSpacing: -0.5,
     lineHeight: 34,
     marginBottom: spacing.xs,
@@ -363,7 +361,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.regular,
     fontSize: 24,
     fontWeight: '400',
-    color: '#000',
     letterSpacing: -0.5,
     lineHeight: 29,
   },
@@ -379,7 +376,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: spacing.xs,
     right: spacing.xs,
-    backgroundColor: '#333',
     borderRadius: 10,
     minWidth: 20,
     height: 20,
@@ -389,7 +385,6 @@ const styles = StyleSheet.create({
   },
   cartBadgeText: {
     fontFamily: typography.fontFamily.bold,
-    color: '#fff',
     fontSize: 11,
     fontWeight: '700',
   },
@@ -400,12 +395,10 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.bold,
     fontSize: 18,
     fontWeight: '700',
-    color: '#000',
     marginBottom: spacing.md,
   },
   categoryContainer: {
     paddingVertical: spacing.md,
-    backgroundColor: '#F6F6F6',
   },
   categoryList: {
     gap: spacing.sm,
@@ -413,7 +406,6 @@ const styles = StyleSheet.create({
   },
   activeFiltersContainer: {
     paddingVertical: spacing.md,
-    backgroundColor: '#F6F6F6',
   },
   activeFiltersList: {
     gap: spacing.sm,
@@ -429,7 +421,6 @@ const styles = StyleSheet.create({
   },
   productCard: {
     width: '48%',
-    backgroundColor: 'white',
     borderRadius: 20,
     overflow: 'hidden',
     marginBottom: spacing.base,
@@ -452,13 +443,11 @@ const styles = StyleSheet.create({
   placeholderImage: {
     width: '100%',
     height: '100%',
-    backgroundColor: '#E5E5E5',
     justifyContent: 'center',
     alignItems: 'center',
   },
   placeholderText: {
     fontSize: 12,
-    color: '#999',
     fontWeight: '400',
   },
   productInfo: {
@@ -469,7 +458,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.semibold,
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
     marginBottom: 4,
     textAlign: 'center',
   },
@@ -477,7 +465,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.medium,
     fontSize: 14,
     fontWeight: '500',
-    color: '#666',
     textAlign: 'center',
   },
   emptyContainer: {
@@ -486,18 +473,15 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 15,
-    color: '#999',
     fontWeight: '400',
   },
   errorText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FF6B6B',
     marginBottom: 8,
   },
   errorSubtext: {
     fontSize: 14,
-    color: '#999',
   },
 });
 

@@ -33,7 +33,8 @@ export const supabase = createClient<Database>(finalSupabaseUrl, finalSupabaseAn
   auth: {
     autoRefreshToken: true,
     persistSession: true,
-    detectSessionInUrl: false,
+    detectSessionInUrl: true, // Enable to detect session from URL hash fragments
+    flowType: 'pkce', // Use PKCE flow for better security
   },
 });
 

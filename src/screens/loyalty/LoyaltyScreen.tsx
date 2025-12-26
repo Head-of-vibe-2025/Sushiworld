@@ -1,133 +1,41 @@
 // Loyalty Screen
 
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useAuth } from '../../context/AuthContext';
-import { Button } from '../../components/design-system';
-import { formatPoints, pointsToEuros } from '../../utils/formatting';
-import { LOYALTY_CONFIG } from '../../utils/constants';
-import QRCode from 'react-native-qrcode-svg';
-// Using the same logo URL as MenuScreen
-const SUSHIWORLD_LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/public/assets/logo.png';
-import type { NavigationParamList } from '../../types/app.types';
-
-type LoyaltyScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 'Loyalty'>;
+import { View, Text, StyleSheet } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
+import { useLoyalty } from '../../hooks/useLoyalty';
+import { formatPoints } from '../../utils/formatting';
+import { spacing, getColors, typography } from '../../theme/designTokens';
 
 export default function LoyaltyScreen() {
-  const navigation = useNavigation<LoyaltyScreenNavigationProp>();
-  const { user } = useAuth();
+  const insets = useSafeAreaInsets();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const { profile, loading } = useLoyalty();
+  const points = profile?.loyalty_points || 0;
 
-  // If user is not authenticated, show sign-in prompt
-  if (!user) {
+  if (loading) {
     return (
-      <View style={styles.container}>
-        <View style={styles.contentContainer}>
-          <View style={styles.logoContainer}>
-            <Image
-              source={{ uri: SUSHIWORLD_LOGO_URL }}
-              style={styles.logo}
-              resizeMode="contain"
-            />
-          </View>
-          <Text style={styles.title}>Join our Loyalty Program</Text>
-          <Text style={styles.subtitle}>
-            Create an account to earn points on every order and redeem rewards
-          </Text>
-          <View style={styles.buttonContainer}>
-            <View style={styles.buttonWrapper}>
-              <Button
-                title="Create Account"
-                onPress={() => {
-                  (navigation as any).navigate('Auth', { screen: 'Signup' });
-                }}
-                variant="primary"
-                fullWidth
-                size="medium"
-              />
-            </View>
-            <View>
-              <Button
-                title="Sign In"
-                onPress={() => {
-                  (navigation as any).navigate('Auth', { screen: 'Login' });
-                }}
-                variant="secondary"
-                fullWidth
-                size="medium"
-              />
-            </View>
+      <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
+        <View style={[styles.content, { paddingTop: insets.top + spacing.screenPadding }]}>
+          <Text style={[styles.title, { color: colors.text.primary }]}>Rewards</Text>
+          <View style={styles.pointsContainer}>
+            <Text style={[styles.pointsValue, { color: colors.text.primary }]}>...</Text>
           </View>
         </View>
       </View>
     );
   }
 
-  // Placeholder data - will be fetched from Supabase
-  const points = 1250;
-  const pendingPoints = 450;
-  const canRedeem = points >= LOYALTY_CONFIG.MIN_REDEMPTION_POINTS;
-
-  // QR code data for in-store scanning
-  const qrData = user?.email || 'guest@example.com';
-
   return (
-    <View style={styles.container}>
-      <View style={styles.pointsCard}>
-        <Text style={styles.pointsLabel}>Your Points</Text>
-        <Text style={styles.pointsValue}>{formatPoints(points)}</Text>
-        <Text style={styles.pointsEuros}>≈ {pointsToEuros(points).toFixed(2)} €</Text>
-      </View>
-
-      {pendingPoints > 0 && (
-        <View style={styles.pendingCard}>
-          <Text style={styles.pendingText}>
-            You have {formatPoints(pendingPoints)} pending points
-          </Text>
-          <Text style={styles.pendingSubtext}>
-            Create an account to claim them and start earning rewards!
-          </Text>
-          <Button
-            title="Create Account to Claim Points"
-            onPress={() => {
-              (navigation as any).navigate('Auth', { screen: 'Signup' });
-            }}
-            variant="primary"
-            fullWidth
-            size="medium"
-            style={styles.claimButton}
-          />
-        </View>
-      )}
-
-      <View style={styles.qrCard}>
-        <Text style={styles.qrTitle}>In-Store QR Code</Text>
-        <Text style={styles.qrSubtitle}>
-          Show this at checkout to earn points
-        </Text>
-        <View style={styles.qrContainer}>
-          <QRCode value={qrData} size={200} />
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
+      <View style={[styles.content, { paddingTop: insets.top + spacing.screenPadding }]}>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Rewards</Text>
+        <View style={styles.pointsContainer}>
+          <Text style={[styles.pointsValue, { color: colors.text.primary }]}>{formatPoints(points)}</Text>
         </View>
       </View>
-
-      <Button
-        title={canRedeem ? 'Redeem Points' : `Need ${LOYALTY_CONFIG.MIN_REDEMPTION_POINTS - points} more points`}
-        onPress={() => navigation.navigate('RedeemPoints')}
-        variant="primary"
-        disabled={!canRedeem}
-        fullWidth
-        size="large"
-        style={styles.redeemButton}
-      />
-
-      <Button
-        title="View Points History"
-        onPress={() => navigation.navigate('PointsHistory')}
-        variant="secondary"
-        fullWidth
-        style={styles.historyButton}
-      />
     </View>
   );
 }
@@ -135,114 +43,27 @@ export default function LoyaltyScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#F6F6F6',
   },
-  pointsCard: {
-    backgroundColor: '#FF6B6B',
-    padding: 30,
-    borderRadius: 16,
+  content: {
+    flex: 1,
+    paddingHorizontal: spacing.screenPadding,
+  },
+  title: {
+    fontFamily: typography.fontFamily.bold,
+    fontSize: 28,
+    fontWeight: '700',
+    letterSpacing: -0.5,
+    lineHeight: 34,
+    marginBottom: spacing.xl,
+  },
+  pointsContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-  },
-  pointsLabel: {
-    fontSize: 16,
-    color: '#fff',
-    opacity: 0.9,
-    marginBottom: 10,
   },
   pointsValue: {
     fontSize: 48,
     fontWeight: 'bold',
-    color: '#fff',
-    marginBottom: 5,
-  },
-  pointsEuros: {
-    fontSize: 18,
-    color: '#fff',
-    opacity: 0.9,
-  },
-  pendingCard: {
-    backgroundColor: '#FFF3CD',
-    padding: 20,
-    borderRadius: 12,
-    marginBottom: 20,
-  },
-  pendingText: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 5,
-  },
-  pendingSubtext: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 15,
-  },
-  claimButton: {
-    marginTop: 5,
-  },
-  qrCard: {
-    backgroundColor: '#f8f8f8',
-    padding: 20,
-    borderRadius: 12,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  qrTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 5,
-  },
-  qrSubtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 20,
-  },
-  qrContainer: {
-    backgroundColor: '#F6F6F6',
-    padding: 20,
-    borderRadius: 12,
-  },
-  redeemButton: {
-    marginBottom: 15,
-  },
-  historyButton: {
-    marginTop: 0,
-  },
-  contentContainer: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  logoContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 30,
-  },
-  logo: {
-    width: 120,
-    height: 60,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    textAlign: 'center',
-    marginBottom: 40,
-    lineHeight: 24,
-    paddingHorizontal: 10,
-  },
-  buttonContainer: {
-    width: '100%',
-  },
-  buttonWrapper: {
-    width: '100%',
-    marginBottom: 16,
   },
 });
 

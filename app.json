@@ -17,14 +17,38 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.sushiworld.app"
+      "bundleIdentifier": "com.sushiworld.app",
+      "associatedDomains": [
+        "applinks:lymingynfnunsrriiama.supabase.co"
+      ]
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.sushiworld.app"
+      "package": "com.sushiworld.app",
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "autoVerify": true,
+          "data": [
+            {
+              "scheme": "sushiworld",
+              "host": "*"
+            },
+            {
+              "scheme": "https",
+              "host": "lymingynfnunsrriiama.supabase.co",
+              "pathPrefix": "/auth/v1/callback"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -40,4 +64,3 @@
     }
   }
 }
-

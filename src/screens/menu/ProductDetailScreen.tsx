@@ -5,12 +5,13 @@ import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } fr
 import { useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RouteProp } from '@react-navigation/native';
+import { useTheme } from '../../context/ThemeContext';
 import { useCart } from '../../context/CartContext';
 import { useMenuItem } from '../../hooks/useFoxyProducts';
 import LoadingSpinner from '../../components/LoadingSpinner';
 import { Button } from '../../components/design-system';
 import { formatPrice } from '../../utils/formatting';
-import { spacing, colors, typography } from '../../theme/designTokens';
+import { spacing, getColors, getBorders, typography } from '../../theme/designTokens';
 import type { NavigationParamList } from '../../types/app.types';
 
 type ProductDetailScreenRouteProp = RouteProp<NavigationParamList, 'ProductDetail'>;
@@ -19,6 +20,9 @@ type ProductDetailScreenNavigationProp = NativeStackNavigationProp<NavigationPar
 export default function ProductDetailScreen() {
   const route = useRoute<ProductDetailScreenRouteProp>();
   const navigation = useNavigation<ProductDetailScreenNavigationProp>();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const borders = getBorders(isDark);
   const { addItem, items, updateQuantity } = useCart();
   const { productId } = route.params;
   const [quantity, setQuantity] = useState(1);
@@ -62,7 +66,7 @@ export default function ProductDetailScreen() {
 
   if (isLoading) {
     return (
-      <View style={styles.centerContainer}>
+      <View style={[styles.centerContainer, { backgroundColor: colors.background.primary }]}>
         <LoadingSpinner />
       </View>
     );
@@ -70,9 +74,9 @@ export default function ProductDetailScreen() {
 
   if (error || !product) {
     return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.errorText}>Failed to load product</Text>
-        <Text style={styles.errorSubtext}>{error?.message || 'Product not found'}</Text>
+      <View style={[styles.centerContainer, { backgroundColor: colors.background.primary }]}>
+        <Text style={[styles.errorText, { color: colors.accent.pink }]}>Failed to load product</Text>
+        <Text style={[styles.errorSubtext, { color: colors.text.secondary }]}>{error?.message || 'Product not found'}</Text>
         <Button
           title="Go Back"
           onPress={() => navigation.goBack()}
@@ -83,72 +87,72 @@ export default function ProductDetailScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backIcon}>←</Text>
+          <Text style={[styles.backIcon, { color: colors.text.primary }]}>←</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-        <View style={styles.imageCard}>
+        <View style={[styles.imageCard, { backgroundColor: colors.background.card }]}>
           <View style={styles.imageContainer}>
             {product.image && (
               <Image source={{ uri: product.image }} style={styles.image} />
             )}
           </View>
           <View style={styles.quantitySection}>
-            <View style={styles.quantitySelector}>
+            <View style={[styles.quantitySelector, { backgroundColor: colors.background.card, borderColor: borders.input.borderColor }]}>
               <TouchableOpacity
                 style={styles.quantityButton}
                 onPress={handleDecrease}
               >
-                <Text style={styles.quantityButtonText}>−</Text>
+                <Text style={[styles.quantityButtonText, { color: colors.text.primary }]}>−</Text>
               </TouchableOpacity>
-              <View style={styles.quantityDisplay}>
-                <Text style={styles.quantityText}>{quantity}</Text>
+              <View style={[styles.quantityDisplay, { backgroundColor: isDark ? colors.primary.white : colors.primary.black }]}>
+                <Text style={[styles.quantityText, { color: isDark ? colors.primary.black : colors.text.inverse }]}>{quantity}</Text>
               </View>
               <TouchableOpacity
                 style={styles.quantityButton}
                 onPress={handleIncrease}
               >
-                <Text style={styles.quantityButtonText}>+</Text>
+                <Text style={[styles.quantityButtonText, { color: colors.text.primary }]}>+</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.priceContainer}>
-              <Text style={styles.totalPriceLabel}>Total Price</Text>
-              <Text style={styles.totalPrice}>{formatPrice(totalPrice)}</Text>
+              <Text style={[styles.totalPriceLabel, { color: colors.text.secondary }]}>Total Price</Text>
+              <Text style={[styles.totalPrice, { color: colors.text.primary }]}>{formatPrice(totalPrice)}</Text>
             </View>
           </View>
         </View>
 
         <View style={styles.scrollIndicator}>
-          <View style={[styles.dot, styles.dotActive]} />
-          <View style={styles.dot} />
-          <View style={styles.dot} />
+          <View style={[styles.dot, styles.dotActive, { backgroundColor: colors.text.primary }]} />
+          <View style={[styles.dot, { backgroundColor: colors.border.light }]} />
+          <View style={[styles.dot, { backgroundColor: colors.border.light }]} />
         </View>
 
         <View style={styles.content}>
           <View style={styles.titleRow}>
-            <Text style={styles.name}>{product.name}</Text>
+            <Text style={[styles.name, { color: colors.text.primary }]}>{product.name}</Text>
           </View>
           {product.description && (
-            <Text style={styles.description}>{product.description}</Text>
+            <Text style={[styles.description, { color: colors.text.secondary }]}>{product.description}</Text>
           )}
         </View>
       </ScrollView>
 
-      <View style={styles.footer}>
+      <View style={[styles.footer, { backgroundColor: colors.background.primary }]}>
         <Button
           title="Add to Cart"
           onPress={handleAddToCart}
           variant="primary"
           fullWidth
           size="large"
-          icon={<Text style={styles.addIcon}>+</Text>}
+          icon={<Text style={[styles.addIcon, { color: colors.text.inverse }]}>+</Text>}
           iconPosition="right"
         />
       </View>
@@ -159,13 +163,11 @@ export default function ProductDetailScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
   },
   centerContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F6F6F6',
     padding: 20,
   },
   header: {
@@ -181,13 +183,11 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 24,
-    color: '#000',
   },
   scrollView: {
     flex: 1,
   },
   imageCard: {
-    backgroundColor: 'white',
     borderRadius: 35,
     marginHorizontal: spacing.screenPadding,
     marginTop: spacing.base,
@@ -220,12 +220,10 @@ const styles = StyleSheet.create({
   quantitySelector: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'white',
     borderRadius: 9999,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.sm,
     borderWidth: 1,
-    borderColor: '#E0E0E0',
   },
   quantityButton: {
     width: 32,
@@ -235,7 +233,6 @@ const styles = StyleSheet.create({
   },
   quantityButtonText: {
     fontFamily: typography.fontFamily.regular,
-    color: '#000',
     fontSize: 24,
     fontWeight: '400',
   },
@@ -243,14 +240,12 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 8,
-    backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
     marginHorizontal: spacing.sm,
   },
   quantityText: {
     fontFamily: typography.fontFamily.bold,
-    color: '#fff',
     fontSize: 18,
     fontWeight: '700',
   },
@@ -261,14 +256,12 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.medium,
     fontSize: 14,
     fontWeight: '500',
-    color: '#666',
     marginBottom: 4,
   },
   totalPrice: {
     fontFamily: typography.fontFamily.bold,
     fontSize: 20,
     fontWeight: '700',
-    color: '#000',
   },
   scrollIndicator: {
     flexDirection: 'row',
@@ -281,10 +274,8 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#ccc',
   },
   dotActive: {
-    backgroundColor: '#000',
     width: 20,
   },
   content: {
@@ -301,7 +292,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.bold,
     fontSize: 24,
     fontWeight: '700',
-    color: '#000',
     flex: 1,
   },
   ratingContainer: {
@@ -315,12 +305,10 @@ const styles = StyleSheet.create({
   rating: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#000',
   },
   description: {
     fontFamily: typography.fontFamily.regular,
     fontSize: 14,
-    color: '#666',
     lineHeight: 20,
   },
   footer: {
@@ -330,23 +318,19 @@ const styles = StyleSheet.create({
     right: 0,
     padding: spacing.screenPadding,
     paddingBottom: 40,
-    backgroundColor: '#F6F6F6',
   },
   addIcon: {
     fontSize: 20,
-    color: '#fff',
     fontWeight: '600',
   },
   errorText: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#FF6B6B',
     marginBottom: 8,
     textAlign: 'center',
   },
   errorSubtext: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 20,
     textAlign: 'center',
   },

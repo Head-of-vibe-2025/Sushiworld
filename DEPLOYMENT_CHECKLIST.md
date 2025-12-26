@@ -191,6 +191,17 @@ After deployment, verify:
 - [ ] Edge Function uses service role key
 - [ ] Mobile app uses anon key only
 
+## 📧 Authentication & Email Checklist
+
+- [ ] Email confirmation disabled (if testing) or enabled (if production)
+- [ ] **🚨 SMTP sender email changed to client's professional email** (NOT personal email)
+  - Current (testing): Your personal email
+  - Production: Client's email (e.g., `noreply@sushiworld.com`)
+  - Location: Supabase Dashboard → Authentication → Settings → SMTP Settings
+- [ ] Password reset redirect URLs configured
+- [ ] Email templates configured and tested
+- [ ] Password reset flow tested end-to-end
+
 ## 📝 Documentation
 
 - [ ] Team knows how to update menu in Webflow

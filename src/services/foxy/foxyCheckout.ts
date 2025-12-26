@@ -9,7 +9,7 @@ export const buildFoxyCheckoutUrl = (
   params: FoxyCheckoutParams
 ): string => {
   const subdomain = FOXY_SUBDOMAINS[region];
-  const baseUrl = `https://${subdomain}.foxycart.com/cart`;
+  const baseUrl = `https://${subdomain}.foxycart.com/checkout`;
 
   // FoxyCart uses repeated parameters (not indexed) for multiple items
   // Format: ?name=Item1&price=10.00&code=CODE1&name=Item2&price=20.00&code=CODE2
@@ -46,6 +46,14 @@ export const buildFoxyCheckoutUrl = (
   if (params.couponCode) {
     queryParams.push(`coupon=${encodeURIComponent(params.couponCode)}`);
   }
+
+  // Add locale/language parameter to force English
+  // FoxyCart supports locale parameter (en, fr, etc.)
+  queryParams.push(`locale=en`);
+  
+  // Add mobile-optimized view parameter if supported
+  // Some FoxyCart configurations support h:mobile parameter
+  queryParams.push(`h:mobile=1`);
 
   const url = `${baseUrl}?${queryParams.join('&')}`;
   console.log('🔗 Foxy Checkout URL:', url);

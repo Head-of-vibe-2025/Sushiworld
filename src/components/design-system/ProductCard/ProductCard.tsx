@@ -3,7 +3,8 @@
 
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { colors, borderRadius, shadows, spacing, typography } from '../../../theme/designTokens';
+import { useTheme } from '../../../context/ThemeContext';
+import { getColors, borderRadius, getShadows, spacing, typography } from '../../../theme/designTokens';
 import Rating from '../Rating';
 
 export interface ProductCardProps {
@@ -23,16 +24,20 @@ export default function ProductCard({
   onPress,
   testID,
 }: ProductCardProps) {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const shadows = getShadows(isDark);
+  
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, { backgroundColor: colors.background.card }, shadows.lg]}
       onPress={onPress}
       activeOpacity={0.9}
       testID={testID}
     >
       <Image source={{ uri: imageUri }} style={styles.image} resizeMode="cover" />
       <View style={styles.content}>
-        <Text style={styles.name} numberOfLines={2}>
+        <Text style={[styles.name, { color: colors.text.primary }]} numberOfLines={2}>
           {name}
         </Text>
         {rating !== undefined && (
@@ -40,7 +45,7 @@ export default function ProductCard({
             <Rating value={rating} size="small" />
           </View>
         )}
-        <Text style={styles.price}>{price}</Text>
+        <Text style={[styles.price, { color: colors.text.primary }]}>{price}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -48,14 +53,8 @@ export default function ProductCard({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: 'white',
     borderRadius: 20,
     padding: spacing.cardPadding,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.15,
-    shadowRadius: 30,
-    elevation: 25,
     marginBottom: spacing.md,
   },
   image: {
@@ -72,7 +71,6 @@ const styles = StyleSheet.create({
     fontSize: typography.productName.fontSize,
     fontWeight: typography.productName.fontWeight,
     lineHeight: typography.productName.fontSize * typography.productName.lineHeight,
-    color: colors.text.primary,
   },
   ratingContainer: {
     marginTop: spacing.xs,
@@ -82,7 +80,6 @@ const styles = StyleSheet.create({
     fontSize: typography.price.fontSize,
     fontWeight: typography.price.fontWeight,
     lineHeight: typography.price.fontSize * typography.price.lineHeight,
-    color: colors.text.primary,
     marginTop: spacing.xs,
   },
 });

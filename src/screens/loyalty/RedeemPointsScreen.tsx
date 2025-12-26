@@ -2,11 +2,15 @@
 
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
 import { useAuth } from '../../context/AuthContext';
 import { formatPoints, pointsToEuros } from '../../utils/formatting';
+import { getColors } from '../../theme/designTokens';
 import { LOYALTY_CONFIG } from '../../utils/constants';
 
 export default function RedeemPointsScreen() {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
 
@@ -40,10 +44,10 @@ export default function RedeemPointsScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <View style={styles.header}>
-        <Text style={styles.title}>Redeem Points</Text>
-        <Text style={styles.subtitle}>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Redeem Points</Text>
+        <Text style={[styles.subtitle, { color: colors.text.secondary }]}>
           Available: {formatPoints(availablePoints)} ({pointsToEuros(availablePoints).toFixed(2)} €)
         </Text>
       </View>
@@ -53,24 +57,25 @@ export default function RedeemPointsScreen() {
           key={option.points}
           style={[
             styles.optionCard,
+            { backgroundColor: colors.background.card },
             availablePoints < option.points && styles.optionCardDisabled,
           ]}
           onPress={() => handleRedeem(option.points, option.euros)}
           disabled={availablePoints < option.points || loading}
         >
           <View style={styles.optionContent}>
-            <Text style={styles.optionEuros}>€{option.euros}</Text>
-            <Text style={styles.optionPoints}>{formatPoints(option.points)} points</Text>
+            <Text style={[styles.optionEuros, { color: colors.accent.pink }]}>€{option.euros}</Text>
+            <Text style={[styles.optionPoints, { color: colors.text.secondary }]}>{formatPoints(option.points)} points</Text>
           </View>
           {availablePoints >= option.points && (
-            <Text style={styles.redeemText}>Redeem →</Text>
+            <Text style={[styles.redeemText, { color: colors.accent.green }]}>Redeem →</Text>
           )}
         </TouchableOpacity>
       ))}
 
       {loading && (
-        <View style={styles.loadingOverlay}>
-          <ActivityIndicator size="large" color="#FF6B6B" />
+        <View style={[styles.loadingOverlay, { backgroundColor: isDark ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)' }]}>
+          <ActivityIndicator size="large" color={colors.accent.pink} />
         </View>
       )}
     </View>
@@ -81,7 +86,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F6F6F6',
   },
   header: {
     marginBottom: 30,
@@ -93,13 +97,11 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
   },
   optionCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#f8f8f8',
     padding: 20,
     borderRadius: 12,
     marginBottom: 15,
@@ -113,21 +115,17 @@ const styles = StyleSheet.create({
   optionEuros: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#FF6B6B',
     marginBottom: 5,
   },
   optionPoints: {
     fontSize: 16,
-    color: '#666',
   },
   redeemText: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#4ECDC4',
   },
   loadingOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     justifyContent: 'center',
     alignItems: 'center',
   },

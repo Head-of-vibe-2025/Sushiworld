@@ -3,7 +3,8 @@
 
 import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, View, ActivityIndicator } from 'react-native';
-import { colors, borderRadius, typography, spacing, touchTarget } from '../../../theme/designTokens';
+import { useTheme } from '../../../context/ThemeContext';
+import { getColors, borderRadius, typography, spacing, touchTarget } from '../../../theme/designTokens';
 
 export type ButtonVariant = 'primary' | 'secondary';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -33,12 +34,16 @@ export default function Button({
   fullWidth = false,
   testID,
 }: ButtonProps) {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
   const isPrimary = variant === 'primary';
   const isDisabled = disabled || loading;
 
   const buttonStyles = [
     styles.button,
-    isPrimary ? styles.primary : styles.secondary,
+    isPrimary 
+      ? { backgroundColor: isDark ? colors.primary.white : colors.primary.black }
+      : { backgroundColor: 'transparent', borderWidth: 1, borderColor: isDark ? colors.primary.white : colors.primary.black },
     size === 'small' && styles.small,
     size === 'large' && styles.large,
     fullWidth && styles.fullWidth,
@@ -47,7 +52,9 @@ export default function Button({
 
   const textStyles = [
     styles.text,
-    isPrimary ? styles.primaryText : styles.secondaryText,
+    isPrimary 
+      ? { color: isDark ? colors.primary.black : colors.text.inverse }
+      : { color: colors.text.primary },
     size === 'small' && styles.smallText,
     size === 'large' && styles.largeText,
     isDisabled && styles.disabledText,
@@ -64,7 +71,7 @@ export default function Button({
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={isPrimary ? colors.text.inverse : colors.text.primary}
+          color={isPrimary ? (isDark ? colors.primary.black : colors.text.inverse) : colors.text.primary}
         />
       ) : (
         <View style={styles.content}>
@@ -84,18 +91,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     minHeight: touchTarget.recommended,
     flexDirection: 'row',
-  },
-  primary: {
-    backgroundColor: colors.primary.black,
-    paddingHorizontal: spacing.xl,
-    paddingVertical: spacing.base,
-  },
-  secondary: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.primary.black,
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
   },
   small: {
     paddingHorizontal: spacing.md,
@@ -123,12 +118,6 @@ const styles = StyleSheet.create({
     fontSize: typography.buttonText.fontSize,
     fontWeight: typography.buttonText.fontWeight,
     lineHeight: typography.buttonText.fontSize * typography.buttonText.lineHeight,
-  },
-  primaryText: {
-    color: colors.text.inverse,
-  },
-  secondaryText: {
-    color: colors.text.primary,
   },
   smallText: {
     fontSize: typography.fontSizes.sm,

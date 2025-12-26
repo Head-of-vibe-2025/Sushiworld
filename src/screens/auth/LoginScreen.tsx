@@ -5,8 +5,10 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } fro
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
 import { authService } from '../../services/supabase/authService';
 import { Button } from '../../components/design-system';
+import { getColors, getBorders } from '../../theme/designTokens';
 // Using the same logo URL as MenuScreen
 const SUSHIWORLD_LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/public/assets/logo.png';
 import type { NavigationParamList } from '../../types/app.types';
@@ -16,6 +18,9 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<NavigationParamList, 
 export default function LoginScreen() {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const insets = useSafeAreaInsets();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const borders = getBorders(isDark);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -47,13 +52,13 @@ export default function LoginScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <TouchableOpacity
         style={[styles.backButton, { top: insets.top + 10 }]}
         onPress={handleBack}
         activeOpacity={0.7}
       >
-        <Text style={styles.backIcon}>←</Text>
+        <Text style={[styles.backIcon, { color: colors.text.primary }]}>←</Text>
       </TouchableOpacity>
       <View style={styles.contentContainer}>
         <View style={styles.logoContainer}>
@@ -69,22 +74,30 @@ export default function LoginScreen() {
             }}
           />
         </View>
-        <Text style={styles.title}>Welcome Back</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Welcome Back</Text>
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: colors.background.card, borderColor: borders.input.borderColor, color: colors.text.primary }]}
           placeholder="Email"
+          placeholderTextColor={colors.text.tertiary}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
           autoCapitalize="none"
         />
         <TextInput
-          style={styles.input}
+          style={[styles.input, { backgroundColor: colors.background.card, borderColor: borders.input.borderColor, color: colors.text.primary }]}
           placeholder="Password"
+          placeholderTextColor={colors.text.tertiary}
           value={password}
           onChangeText={setPassword}
           secureTextEntry
         />
+        <TouchableOpacity
+          onPress={() => navigation.navigate('ForgotPassword')}
+          style={styles.forgotPasswordButton}
+        >
+          <Text style={[styles.forgotPasswordText, { color: colors.accent.pink }]}>Forgot Password?</Text>
+        </TouchableOpacity>
         <Button
           title={loading ? 'Signing in...' : 'Sign In'}
           onPress={handleLogin}
@@ -98,7 +111,7 @@ export default function LoginScreen() {
           onPress={() => navigation.navigate('Signup')}
           style={styles.linkButton}
         >
-          <Text style={styles.linkText}>Don't have an account? Sign up</Text>
+          <Text style={[styles.linkText, { color: colors.accent.pink }]}>Don't have an account? Sign up</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -108,7 +121,6 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
   },
   backButton: {
     position: 'absolute',
@@ -118,7 +130,6 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 28,
-    color: '#000',
     fontWeight: '600',
   },
   contentContainer: {
@@ -143,7 +154,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     padding: 15,
     marginBottom: 15,
@@ -152,12 +162,18 @@ const styles = StyleSheet.create({
   button: {
     marginTop: 10,
   },
+  forgotPasswordButton: {
+    alignSelf: 'flex-end',
+    marginBottom: 10,
+  },
+  forgotPasswordText: {
+    fontSize: 14,
+  },
   linkButton: {
     marginTop: 20,
     alignItems: 'center',
   },
   linkText: {
-    color: '#EA3886',
     fontSize: 14,
   },
 });

@@ -3,7 +3,8 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { colors, borderRadius, spacing, typography } from '../../../theme/designTokens';
+import { useTheme } from '../../../context/ThemeContext';
+import { getColors, getBorders, borderRadius, spacing, typography } from '../../../theme/designTokens';
 
 export interface FilterTagProps {
   label: string;
@@ -22,14 +23,20 @@ export default function FilterTag({
   showClose = false,
   testID,
 }: FilterTagProps) {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const borders = getBorders(isDark);
+  
   const containerStyles = [
     styles.container,
-    active && styles.active,
+    { backgroundColor: colors.background.secondary, borderColor: borders.card.borderColor },
+    active && { backgroundColor: colors.accent.pink, borderColor: colors.accent.pink },
   ];
 
   const textStyles = [
     styles.text,
-    active && styles.activeText,
+    { color: colors.text.primary },
+    active && { color: colors.text.inverse },
   ];
 
   if (onClose || showClose) {
@@ -42,7 +49,7 @@ export default function FilterTag({
             style={styles.closeButton}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           >
-            <Text style={styles.closeText}>×</Text>
+            <Text style={[styles.closeText, { color: active ? colors.text.inverse : colors.text.secondary }]}>×</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -65,26 +72,16 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: colors.background.secondary,
     borderRadius: borderRadius.filterTag,
     paddingHorizontal: spacing.base,
     paddingVertical: spacing.sm,
     marginRight: spacing.sm,
     borderWidth: 1,
-    borderColor: colors.border.light,
-  },
-  active: {
-    backgroundColor: colors.primary.black,
-    borderColor: colors.primary.black,
   },
   text: {
     fontFamily: typography.fontFamily.medium,
     fontSize: typography.bodyText.fontSize,
     fontWeight: typography.fontWeights.medium,
-    color: colors.text.primary,
-  },
-  activeText: {
-    color: colors.text.inverse,
   },
   closeButton: {
     marginLeft: spacing.xs,
@@ -92,7 +89,6 @@ const styles = StyleSheet.create({
   },
   closeText: {
     fontSize: typography.fontSizes.xl,
-    color: colors.text.secondary,
     lineHeight: typography.fontSizes.xl,
   },
 });

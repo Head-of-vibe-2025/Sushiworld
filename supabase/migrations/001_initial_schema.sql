@@ -68,31 +68,37 @@ ALTER TABLE generated_coupons ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies
 -- Users can view their own profile
+DROP POLICY IF EXISTS "Users can view own profile" ON profiles;
 CREATE POLICY "Users can view own profile"
   ON profiles FOR SELECT
   USING (auth.uid()::text = id::text OR email = auth.email());
 
 -- Users can update their own profile
+DROP POLICY IF EXISTS "Users can update own profile" ON profiles;
 CREATE POLICY "Users can update own profile"
   ON profiles FOR UPDATE
   USING (auth.uid()::text = id::text);
 
 -- Users can view their own loyalty transactions
+DROP POLICY IF EXISTS "Users can view own transactions" ON loyalty_transactions;
 CREATE POLICY "Users can view own transactions"
   ON loyalty_transactions FOR SELECT
   USING (email = auth.email() OR profile_id IN (SELECT id FROM profiles WHERE id::text = auth.uid()::text));
 
 -- Users can view their own push tokens
+DROP POLICY IF EXISTS "Users can view own push tokens" ON push_tokens;
 CREATE POLICY "Users can view own push tokens"
   ON push_tokens FOR SELECT
   USING (profile_id IN (SELECT id FROM profiles WHERE id::text = auth.uid()::text));
 
 -- Users can manage their own push tokens
+DROP POLICY IF EXISTS "Users can manage own push tokens" ON push_tokens;
 CREATE POLICY "Users can manage own push tokens"
   ON push_tokens FOR ALL
   USING (profile_id IN (SELECT id FROM profiles WHERE id::text = auth.uid()::text));
 
 -- Users can view their own coupons
+DROP POLICY IF EXISTS "Users can view own coupons" ON generated_coupons;
 CREATE POLICY "Users can view own coupons"
   ON generated_coupons FOR SELECT
   USING (email = auth.email() OR profile_id IN (SELECT id FROM profiles WHERE id::text = auth.uid()::text));
@@ -107,6 +113,7 @@ END;
 $$ language 'plpgsql';
 
 -- Trigger to automatically update updated_at
+DROP TRIGGER IF EXISTS update_profiles_updated_at ON profiles;
 CREATE TRIGGER update_profiles_updated_at BEFORE UPDATE ON profiles
   FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 

@@ -6,17 +6,20 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import Svg, { Path, Circle, Ellipse } from 'react-native-svg';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useTheme } from '../context/ThemeContext';
+import { getColors } from '../theme/designTokens';
 import MenuScreen from '../screens/menu/MenuScreen';
 import ProductDetailScreen from '../screens/menu/ProductDetailScreen';
 import CartScreen from '../screens/cart/CartScreen';
 import CheckoutScreen from '../screens/cart/CheckoutScreen';
+import FoxyCheckoutWebView from '../screens/cart/FoxyCheckoutWebView';
 import OrderHistoryScreen from '../screens/orders/OrderHistoryScreen';
 import OrderDetailScreen from '../screens/orders/OrderDetailScreen';
+import BookingsScreen from '../screens/bookings/BookingsScreen';
 import LoyaltyScreen from '../screens/loyalty/LoyaltyScreen';
 import RedeemPointsScreen from '../screens/loyalty/RedeemPointsScreen';
 import PointsHistoryScreen from '../screens/loyalty/PointsHistoryScreen';
 import ProfileScreen from '../screens/profile/ProfileScreen';
-import PreferencesScreen from '../screens/profile/PreferencesScreen';
 import SettingsScreen from '../screens/profile/SettingsScreen';
 import DesignSystemPreviewScreen from '../screens/design-system/DesignSystemPreviewScreen';
 import type { NavigationParamList } from '../types/app.types';
@@ -52,12 +55,21 @@ function MenuStack() {
         component={CheckoutScreen}
         options={{ title: 'Checkout' }}
       />
+      <Stack.Screen
+        name="FoxyCheckout"
+        component={FoxyCheckoutWebView}
+        options={{ 
+          headerShown: false,
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
+        }}
+      />
     </Stack.Navigator>
   );
 }
 
-// Orders Stack
-function OrdersStack() {
+// Bookings Stack
+function BookingsStack() {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -65,13 +77,8 @@ function OrdersStack() {
       }}
     >
       <Stack.Screen
-        name="Orders"
-        component={OrderHistoryScreen}
-        options={{ headerShown: false }}
-      />
-      <Stack.Screen
-        name="OrderDetail"
-        component={OrderDetailScreen}
+        name="Bookings"
+        component={BookingsScreen}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>
@@ -119,13 +126,18 @@ function ProfileStack() {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Preferences"
-        component={PreferencesScreen}
+        name="Settings"
+        component={SettingsScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Settings"
-        component={SettingsScreen}
+        name="Orders"
+        component={OrderHistoryScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="OrderDetail"
+        component={OrderDetailScreen}
         options={{ headerShown: false }}
       />
       <Stack.Screen
@@ -238,11 +250,12 @@ const SmileIcon = ({ color = '#FFFFFF' }: { color?: string }) => (
   </Svg>
 );
 
-// Icon component wrapper for active state (white circle)
-const IconWrapper = ({ focused, children }: { focused: boolean; children: React.ReactNode }) => {
+// Icon component wrapper for active state (circle background)
+const IconWrapper = ({ focused, children, isDark }: { focused: boolean; children: React.ReactNode; isDark: boolean }) => {
+  const colors = getColors(isDark);
   if (focused) {
     return (
-      <View style={styles.activeIconContainer}>
+      <View style={[styles.activeIconContainer, { backgroundColor: isDark ? colors.primary.black : colors.text.inverse }]}>
         {children}
       </View>
     );
@@ -251,14 +264,17 @@ const IconWrapper = ({ focused, children }: { focused: boolean; children: React.
 };
 
 export default function AppTabs() {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: '#FFFFFF',
-        tabBarInactiveTintColor: '#FFFFFF',
+        tabBarActiveTintColor: isDark ? colors.primary.black : colors.text.inverse,
+        tabBarInactiveTintColor: isDark ? colors.primary.black : colors.text.inverse,
         tabBarStyle: {
-          backgroundColor: '#000000',
+          backgroundColor: isDark ? colors.primary.white : colors.primary.black,
           borderTopWidth: 0,
           height: 70,
           paddingBottom: 10,
@@ -284,10 +300,10 @@ export default function AppTabs() {
           return {
             title: '',
             tabBarStyle: {
-              ...(routeName === 'ProductDetail' || routeName === 'Cart' || routeName === 'Checkout'
+              ...(routeName === 'ProductDetail' || routeName === 'Cart' || routeName === 'Checkout' || routeName === 'FoxyCheckout'
                 ? { display: 'none' }
                 : {
-                    backgroundColor: '#000000',
+                    backgroundColor: isDark ? colors.primary.white : colors.primary.black,
                     borderTopWidth: 0,
                     height: 70,
                     paddingBottom: 10,
@@ -299,21 +315,21 @@ export default function AppTabs() {
                   }),
             },
             tabBarIcon: ({ focused }) => (
-              <IconWrapper focused={focused}>
-                <HomeIcon color={focused ? '#000000' : '#FFFFFF'} />
+              <IconWrapper focused={focused} isDark={isDark}>
+                <HomeIcon color={focused ? (isDark ? colors.primary.white : colors.primary.black) : (isDark ? colors.primary.black : colors.text.inverse)} />
               </IconWrapper>
             ),
           };
         }}
       />
       <Tab.Screen
-        name="OrdersTab"
-        component={OrdersStack}
+        name="BookingsTab"
+        component={BookingsStack}
         options={{
           title: '',
           tabBarIcon: ({ focused }) => (
-            <IconWrapper focused={focused}>
-              <ChecklistIcon color={focused ? '#000000' : '#FFFFFF'} />
+            <IconWrapper focused={focused} isDark={isDark}>
+              <ChecklistIcon color={focused ? (isDark ? colors.primary.white : colors.primary.black) : (isDark ? colors.primary.black : colors.text.inverse)} />
             </IconWrapper>
           ),
         }}
@@ -324,8 +340,8 @@ export default function AppTabs() {
         options={{
           title: '',
           tabBarIcon: ({ focused }) => (
-            <IconWrapper focused={focused}>
-              <SmileIcon color={focused ? '#000000' : '#FFFFFF'} />
+            <IconWrapper focused={focused} isDark={isDark}>
+              <SmileIcon color={focused ? (isDark ? colors.primary.white : colors.primary.black) : (isDark ? colors.primary.black : colors.text.inverse)} />
             </IconWrapper>
           ),
         }}
@@ -336,8 +352,8 @@ export default function AppTabs() {
         options={{
           title: '',
           tabBarIcon: ({ focused }) => (
-            <IconWrapper focused={focused}>
-              <UserIcon color={focused ? '#000000' : '#FFFFFF'} />
+            <IconWrapper focused={focused} isDark={isDark}>
+              <UserIcon color={focused ? (isDark ? colors.primary.white : colors.primary.black) : (isDark ? colors.primary.black : colors.text.inverse)} />
             </IconWrapper>
           ),
         }}
@@ -351,7 +367,6 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },

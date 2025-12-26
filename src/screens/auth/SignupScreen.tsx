@@ -1,13 +1,16 @@
 // Signup Screen
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useTheme } from '../../context/ThemeContext';
 import { authService } from '../../services/supabase/authService';
 import { useRegion } from '../../context/RegionContext';
+import { useAuth } from '../../context/AuthContext';
 import { Button } from '../../components/design-system';
+import { getColors, getBorders } from '../../theme/designTokens';
 // Using the same logo URL as MenuScreen
 const SUSHIWORLD_LOGO_URL = 'https://lymingynfnunsrriiama.supabase.co/storage/v1/object/public/assets/logo.png';
 import type { NavigationParamList } from '../../types/app.types';
@@ -17,11 +20,25 @@ type SignupScreenNavigationProp = NativeStackNavigationProp<NavigationParamList,
 export default function SignupScreen() {
   const navigation = useNavigation<SignupScreenNavigationProp>();
   const insets = useSafeAreaInsets();
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  const borders = getBorders(isDark);
   const { region } = useRegion();
+  const { user } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [signupCompleted, setSignupCompleted] = useState(false);
+
+  // Navigate when user becomes authenticated after signup
+  useEffect(() => {
+    if (signupCompleted && user) {
+      // User is now authenticated, navigation will be handled by RootNavigator
+      // Reset the flag
+      setSignupCompleted(false);
+    }
+  }, [user, signupCompleted]);
 
   const handleSignup = async () => {
     if (!email || !password) {
@@ -42,9 +59,13 @@ export default function SignupScreen() {
     setLoading(true);
     try {
       await authService.signUp({ email, password, preferredRegion: region });
-      // Navigation handled by RootNavigator based on auth state
+      // Mark signup as completed - useEffect will handle navigation when user state updates
+      setSignupCompleted(true);
+      // Give auth state time to update
+      await new Promise(resolve => setTimeout(resolve, 500));
     } catch (error: any) {
       Alert.alert('Signup Failed', error.message || 'Could not create account');
+      setSignupCompleted(false);
     } finally {
       setLoading(false);
     }
@@ -60,13 +81,13 @@ export default function SignupScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <TouchableOpacity
         style={[styles.backButton, { top: insets.top + 10 }]}
         onPress={handleBack}
         activeOpacity={0.7}
       >
-        <Text style={styles.backIcon}>←</Text>
+        <Text style={[styles.backIcon, { color: colors.text.primary }]}>←</Text>
       </TouchableOpacity>
       <View style={styles.contentContainer}>
         <View style={styles.logoContainer}>
@@ -82,25 +103,28 @@ export default function SignupScreen() {
             }}
           />
         </View>
-        <Text style={styles.title}>Create Account</Text>
+        <Text style={[styles.title, { color: colors.text.primary }]}>Create Account</Text>
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: colors.background.card, borderColor: borders.input.borderColor, color: colors.text.primary }]}
         placeholder="Email"
+        placeholderTextColor={colors.text.tertiary}
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
         autoCapitalize="none"
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: colors.background.card, borderColor: borders.input.borderColor, color: colors.text.primary }]}
         placeholder="Password"
+        placeholderTextColor={colors.text.tertiary}
         value={password}
         onChangeText={setPassword}
         secureTextEntry
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { backgroundColor: colors.background.card, borderColor: borders.input.borderColor, color: colors.text.primary }]}
         placeholder="Confirm Password"
+        placeholderTextColor={colors.text.tertiary}
         value={confirmPassword}
         onChangeText={setConfirmPassword}
         secureTextEntry
@@ -118,7 +142,7 @@ export default function SignupScreen() {
         onPress={() => navigation.navigate('Login')}
         style={styles.linkButton}
       >
-        <Text style={styles.linkText}>Already have an account? Sign in</Text>
+        <Text style={[styles.linkText, { color: colors.accent.pink }]}>Already have an account? Sign in</Text>
       </TouchableOpacity>
       </View>
     </View>
@@ -128,7 +152,6 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
   },
   backButton: {
     position: 'absolute',
@@ -138,7 +161,6 @@ const styles = StyleSheet.create({
   },
   backIcon: {
     fontSize: 28,
-    color: '#000',
     fontWeight: '600',
   },
   contentContainer: {
@@ -163,7 +185,6 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 8,
     padding: 15,
     marginBottom: 15,
@@ -177,7 +198,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   linkText: {
-    color: '#EA3886',
     fontSize: 14,
   },
 });

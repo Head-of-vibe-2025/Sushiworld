@@ -2,9 +2,14 @@
 
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
+import { useTheme } from '../../context/ThemeContext';
 import { formatPoints, formatDate } from '../../utils/formatting';
+import { getColors } from '../../theme/designTokens';
 
 export default function PointsHistoryScreen() {
+  const { isDark } = useTheme();
+  const colors = getColors(isDark);
+  
   // Placeholder data - will be fetched from Supabase
   const transactions = [
     {
@@ -36,21 +41,21 @@ export default function PointsHistoryScreen() {
   const renderTransaction = ({ item }: { item: typeof transactions[0] }) => {
     const isPositive = item.points > 0;
     return (
-      <View style={styles.transactionCard}>
+      <View style={[styles.transactionCard, { backgroundColor: colors.background.card }]}>
         <View style={styles.transactionHeader}>
-          <Text style={styles.transactionDescription}>{item.description}</Text>
-          <Text style={[styles.transactionPoints, isPositive && styles.positive]}>
+          <Text style={[styles.transactionDescription, { color: colors.text.primary }]}>{item.description}</Text>
+          <Text style={[styles.transactionPoints, { color: isPositive ? colors.accent.green : colors.accent.pink }]}>
             {isPositive ? '+' : ''}{formatPoints(item.points)}
           </Text>
         </View>
-        <Text style={styles.transactionDate}>{formatDate(item.date)}</Text>
-        <Text style={styles.transactionSource}>{item.source}</Text>
+        <Text style={[styles.transactionDate, { color: colors.text.secondary }]}>{formatDate(item.date)}</Text>
+        <Text style={[styles.transactionSource, { color: colors.text.tertiary }]}>{item.source}</Text>
       </View>
     );
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background.primary }]}>
       <FlatList
         data={transactions}
         renderItem={renderTransaction}
@@ -64,13 +69,11 @@ export default function PointsHistoryScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
   },
   list: {
     padding: 15,
   },
   transactionCard: {
-    backgroundColor: '#f8f8f8',
     padding: 15,
     borderRadius: 12,
     marginBottom: 15,
@@ -88,19 +91,13 @@ const styles = StyleSheet.create({
   transactionPoints: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#FF6B6B',
-  },
-  positive: {
-    color: '#4ECDC4',
   },
   transactionDate: {
     fontSize: 14,
-    color: '#666',
     marginBottom: 5,
   },
   transactionSource: {
     fontSize: 12,
-    color: '#999',
     textTransform: 'capitalize',
   },
 });
