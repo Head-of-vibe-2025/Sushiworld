@@ -78,27 +78,46 @@ export const pushService = {
     }
 
     try {
+      // Project ID from app.json: extra.eas.projectId = "428433c9-0ae1-4cfa-b10e-eff51351a99b"
+      // Can also be set via EXPO_PUBLIC_PROJECT_ID environment variable
+      const projectId = process.env.EXPO_PUBLIC_PROJECT_ID || '428433c9-0ae1-4cfa-b10e-eff51351a99b';
+      
+      console.log('📱 Getting Expo push token with project ID:', projectId);
+      
       const tokenData = await Notifications.getExpoPushTokenAsync({
-        projectId: process.env.EXPO_PUBLIC_PROJECT_ID,
+        projectId,
       });
 
       const token = tokenData.data;
+      console.log('✅ Expo push token obtained:', token.substring(0, 20) + '...');
 
       // Save token to Supabase if user is logged in
       if (userId) {
-        await supabase.from('push_tokens').upsert({
+        const { error: tokenError } = await supabase.from('push_tokens').upsert({
           profile_id: userId,
           token,
           platform: Platform.OS === 'ios' ? 'ios' : 'android',
+        }, {
+          onConflict: 'token'
         });
+
+        if (tokenError) {
+          console.error('❌ Error saving push token to Supabase:', tokenError);
+        } else {
+          console.log('✅ Push token saved to Supabase successfully');
+        }
+      } else {
+        console.warn('⚠️ No userId provided, push token not saved to database');
       }
 
-      // Schedule weekly notification after successful registration
-      await this.scheduleWeeklyNotification();
+      // NOTE: We do NOT schedule local notifications here
+      // Push notifications are sent by the Supabase Edge Function (weekly-notifications)
+      // which runs on a schedule and sends notifications via Expo Push API
+      // Local notifications are unreliable when the app is closed
 
       return token;
     } catch (error) {
-      console.error('Error registering for push notifications:', error);
+      console.error('❌ Error registering for push notifications:', error);
       return null;
     }
   },
@@ -109,75 +128,51 @@ export const pushService = {
 
   /**
    * Schedule weekly notifications with rotating messages
-   * Schedules 5 different notifications that rotate each week
-   * Each notification repeats every 35 days (5 weeks), offset by 7 days from each other
+   * 
+   * ⚠️ DEPRECATED: This function schedules LOCAL notifications which are unreliable
+   * when the app is closed. Use push notifications instead via the Supabase Edge Function.
+   * 
+   * This function is kept for backward compatibility but should not be called.
+   * Push notifications are sent by the weekly-notifications Supabase Edge Function
+   * which runs on a schedule and sends notifications via Expo Push API.
    */
   async scheduleWeeklyNotification(): Promise<void> {
+    console.warn('⚠️ scheduleWeeklyNotification() is deprecated and should not be used');
+    console.warn('📝 Push notifications are sent by the Supabase Edge Function (weekly-notifications)');
+    console.warn('📝 Make sure the weekly-notifications function is scheduled to run weekly');
+    
+    // Cancel any existing local notifications to prevent bulk delivery
     try {
-      // Cancel any existing weekly notifications first
-      for (const id of WEEKLY_NOTIFICATION_IDS) {
-        await Notifications.cancelScheduledNotificationAsync(id);
-      }
-
-      const now = new Date();
-      const baseTime = new Date(now);
-      baseTime.setHours(17, 0, 0, 0); // 5:00 PM
-
-      // Schedule 5 notifications using a rotating pattern
-      // Strategy: Each notification fires every 35 days (5 weeks), but they're offset by 7 days
-      // This creates a weekly rotation: Week 1 = msg 0, Week 2 = msg 1, etc.
-      // We'll schedule enough instances to cover ~1 year (52 weeks = ~10 cycles)
-      const cyclesToSchedule = 10; // 10 cycles of 5 weeks = 50 weeks
+      const allScheduled = await Notifications.getAllScheduledNotificationsAsync();
+      const weeklyNotifications = allScheduled.filter(notif => 
+        WEEKLY_NOTIFICATION_IDS.some(id => notif.identifier.startsWith(id))
+      );
       
-      for (let i = 0; i < 5; i++) {
-        const message = NOTIFICATION_MESSAGES[i];
-        
-        // Calculate when this notification should first fire
-        // Notification 0: fires in 7 days, then every 35 days
-        // Notification 1: fires in 14 days, then every 35 days
-        // etc.
-        const firstFireDays = 7 + (i * 7);
-        const firstFireSeconds = firstFireDays * 24 * 60 * 60;
-        const repeatIntervalSeconds = 35 * 24 * 60 * 60; // 35 days = 5 weeks
-        
-        // Schedule all instances for this notification (one per cycle)
-        for (let cycle = 0; cycle < cyclesToSchedule; cycle++) {
-          const fireDate = new Date(now.getTime() + (firstFireSeconds + (cycle * repeatIntervalSeconds)) * 1000);
-          
-          await Notifications.scheduleNotificationAsync({
-            identifier: `${WEEKLY_NOTIFICATION_IDS[i]}-${cycle}`,
-            content: {
-              title: message.title,
-              body: message.body,
-              sound: true,
-              priority: Notifications.AndroidNotificationPriority.HIGH,
-              data: {
-                type: 'weekly_reminder',
-                action: 'open_menu',
-                messageIndex: i,
-              },
-            },
-            trigger: {
-              date: fireDate,
-            },
-          });
-        }
-
-        const firstFireDate = new Date(now.getTime() + firstFireSeconds * 1000);
-        console.log(`Scheduled notification ${i + 1}/5: "${message.title}" - ${cyclesToSchedule} instances, first in ${firstFireDays} days (${firstFireDate.toISOString()}), then every 35 days`);
+      for (const notif of weeklyNotifications) {
+        await Notifications.cancelScheduledNotificationAsync(notif.identifier);
       }
-
-      console.log('All 5 weekly notifications scheduled. Messages will rotate each week.');
+      
+      if (weeklyNotifications.length > 0) {
+        console.log(`🧹 Cancelled ${weeklyNotifications.length} old local notifications`);
+      }
     } catch (error) {
-      console.error('Error scheduling weekly notifications:', error);
+      console.error('Error cancelling old notifications:', error);
     }
+    
+    // Do not schedule new local notifications
+    // Push notifications are handled by the Supabase Edge Function
   },
 
   /**
-   * Cancel all weekly notifications
+   * Cancel all weekly notifications (local notifications only)
+   * 
+   * This cancels any existing LOCAL notifications that may have been scheduled.
+   * Push notifications are controlled by the Supabase Edge Function and the push_enabled flag.
    */
   async cancelWeeklyNotification(): Promise<void> {
     try {
+      console.log('🧹 Cancelling any existing local notifications...');
+      
       // Cancel all scheduled notifications and find weekly ones
       const allScheduled = await Notifications.getAllScheduledNotificationsAsync();
       const weeklyNotifications = allScheduled.filter(notif => 
@@ -188,9 +183,15 @@ export const pushService = {
         await Notifications.cancelScheduledNotificationAsync(notif.identifier);
       }
       
-      console.log(`Cancelled ${weeklyNotifications.length} weekly notifications`);
+      if (weeklyNotifications.length > 0) {
+        console.log(`✅ Cancelled ${weeklyNotifications.length} local notifications`);
+      } else {
+        console.log('ℹ️ No local notifications to cancel');
+      }
+      
+      console.log('📝 Push notifications are controlled by the Supabase Edge Function');
     } catch (error) {
-      console.error('Error cancelling weekly notifications:', error);
+      console.error('❌ Error cancelling weekly notifications:', error);
     }
   },
 

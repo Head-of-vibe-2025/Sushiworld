@@ -65,36 +65,35 @@ export default function SettingsScreen() {
     setPushEnabled(value);
 
     if (!user) {
-      // If not logged in, just schedule/cancel local notifications
-      if (value) {
-        await pushService.scheduleWeeklyNotification();
-      } else {
-        await pushService.cancelWeeklyNotification();
-      }
+      console.warn('⚠️ Cannot update push notification preference: user not logged in');
+      setPushEnabled(!value); // Revert on error
       return;
     }
 
     try {
-      // Update profile preference
+      // Update profile preference in database
       const { error } = await supabase
         .from('profiles')
         .update({ push_enabled: value })
         .eq('id', user.id);
 
       if (error) {
-        console.error('Error updating push preference:', error);
+        console.error('❌ Error updating push preference:', error);
         setPushEnabled(!value); // Revert on error
         return;
       }
 
-      // Schedule or cancel weekly notifications based on preference
-      if (value) {
-        await pushService.scheduleWeeklyNotification();
-      } else {
+      console.log(`✅ Push notification preference updated to: ${value}`);
+      console.log('📝 Push notifications are sent by the Supabase Edge Function (weekly-notifications)');
+      console.log('📝 Changing this preference affects whether you receive push notifications from the server');
+      
+      // Cancel any existing local notifications when disabling
+      // (Push notifications are controlled by the server based on push_enabled flag)
+      if (!value) {
         await pushService.cancelWeeklyNotification();
       }
     } catch (error) {
-      console.error('Error updating push notifications:', error);
+      console.error('❌ Error updating push notifications:', error);
       setPushEnabled(!value); // Revert on error
     }
   };

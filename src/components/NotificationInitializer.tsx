@@ -16,39 +16,53 @@ export const NotificationInitializer: React.FC = () => {
   useEffect(() => {
     const initializeNotifications = async () => {
       try {
+        console.log('🔔 Initializing push notifications...');
+        
         // Request permissions and register for push notifications
         const hasPermission = await pushService.requestPermissions();
         
         if (!hasPermission) {
-          console.log('Push notification permissions not granted');
+          console.warn('⚠️ Push notification permissions not granted');
           return;
         }
 
+        console.log('✅ Push notification permissions granted');
+
         // Register for push notifications if user is logged in
         if (user) {
-          const token = await pushService.registerForPushNotifications(user.id);
+          console.log('👤 User logged in, registering push token for user:', user.id);
           
-          if (token) {
-            console.log('Push notifications registered successfully');
-            
-            // Check if user has push notifications enabled in their profile
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('push_enabled')
-              .eq('id', user.id)
-              .single();
+          // Check if user has push notifications enabled in their profile
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('push_enabled')
+            .eq('id', user.id)
+            .single();
 
-            // Schedule weekly notification if push is enabled (default is true)
-            if (profile?.push_enabled !== false) {
-              await pushService.scheduleWeeklyNotification();
+          if (profileError) {
+            console.error('❌ Error fetching user profile:', profileError);
+          }
+
+          // Only register if push is enabled (default is true)
+          if (profile?.push_enabled !== false) {
+            const token = await pushService.registerForPushNotifications(user.id);
+            
+            if (token) {
+              console.log('✅ Push notifications registered successfully');
+              console.log('📱 Notifications will be sent via Supabase Edge Function (weekly-notifications)');
+              console.log('📝 Make sure the weekly-notifications function is scheduled to run weekly');
+            } else {
+              console.warn('⚠️ Failed to obtain push token');
             }
+          } else {
+            console.log('ℹ️ Push notifications disabled for this user');
           }
         } else {
-          // Even if not logged in, we can still schedule local notifications
-          await pushService.scheduleWeeklyNotification();
+          console.log('ℹ️ User not logged in, skipping push token registration');
+          console.log('📝 Push tokens require a user account to be saved');
         }
       } catch (error) {
-        console.error('Error initializing notifications:', error);
+        console.error('❌ Error initializing notifications:', error);
       }
     };
 
