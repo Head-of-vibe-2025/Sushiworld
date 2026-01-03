@@ -97,3 +97,4 @@ If this works, the issue is with the redirect URL format.
 4. Try with simpler redirect URL format
 5. Contact Supabase support if issue persists
 
+

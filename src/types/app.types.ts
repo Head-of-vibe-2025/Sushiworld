@@ -29,6 +29,8 @@ export interface NavigationParamList {
   Orders: undefined;
   OrderDetail: { orderId: string };
   Bookings: undefined;
+  RestaurantDetail: { restaurantId: string };
+  BookingWebView: { bookingUrl: string; restaurantName: string };
   Loyalty: undefined;
   RedeemPoints: undefined;
   PointsHistory: undefined;

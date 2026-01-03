@@ -48,3 +48,6 @@ export type { OrderSummaryProps, OrderSummaryItem } from './OrderSummary';
 
 export { default as NavigationBar } from './NavigationBar';
 export type { NavigationBarProps, NavigationItem } from './NavigationBar';
+
+export { default as RestaurantCard } from './RestaurantCard';
+export type { RestaurantCardProps } from './RestaurantCard';

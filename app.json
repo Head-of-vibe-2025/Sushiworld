@@ -18,9 +18,13 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.sushiworld.app",
+      "buildNumber": "2",
       "associatedDomains": [
         "applinks:lymingynfnunsrriiama.supabase.co"
-      ]
+      ],
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -59,8 +63,9 @@
     "scheme": "sushiworld",
     "extra": {
       "eas": {
-        "projectId": "your-project-id"
+        "projectId": "428433c9-0ae1-4cfa-b10e-eff51351a99b"
       }
-    }
+    },
+    "owner": "sandrasanz"
   }
 }

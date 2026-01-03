@@ -54,3 +54,4 @@ This is the fastest way to:
 2. **If still no email**: Set up SMTP with your email for testing
 3. **Once it works**: Document the SMTP setup process for the client
 
+

@@ -52,3 +52,4 @@ Before setting up SMTP, try:
 4. Check email inbox AND spam folder
 5. If still not working, set up custom SMTP
 
+

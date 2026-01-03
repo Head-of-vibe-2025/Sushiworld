@@ -20,8 +20,10 @@ if (!supabaseUrl || !supabaseAnonKey) {
     // In development, use placeholders but warn
     console.warn('⚠️ Using placeholder values. App may not work correctly.');
   } else {
-    // In production, throw error to prevent app from running with invalid config
-    throw new Error(errorMsg);
+    // In production, log error but don't throw to prevent app crash
+    // The app will still try to work, but auth features won't function
+    console.error(errorMsg);
+    console.error('⚠️ App will continue but authentication features may not work.');
   }
 }
 

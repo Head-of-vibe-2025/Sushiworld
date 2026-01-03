@@ -60,3 +60,4 @@ Once you disable email confirmation or manually verify your user:
 2. Or create a new account - it should automatically log you in
 3. You should see the logged-in version of the app immediately
 
+

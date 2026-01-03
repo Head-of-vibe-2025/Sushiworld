@@ -16,6 +16,8 @@ import FoxyCheckoutWebView from '../screens/cart/FoxyCheckoutWebView';
 import OrderHistoryScreen from '../screens/orders/OrderHistoryScreen';
 import OrderDetailScreen from '../screens/orders/OrderDetailScreen';
 import BookingsScreen from '../screens/bookings/BookingsScreen';
+import RestaurantDetailScreen from '../screens/bookings/RestaurantDetailScreen';
+import BookingWebView from '../screens/bookings/BookingWebView';
 import LoyaltyScreen from '../screens/loyalty/LoyaltyScreen';
 import RedeemPointsScreen from '../screens/loyalty/RedeemPointsScreen';
 import PointsHistoryScreen from '../screens/loyalty/PointsHistoryScreen';
@@ -80,6 +82,20 @@ function BookingsStack() {
         name="Bookings"
         component={BookingsScreen}
         options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="RestaurantDetail"
+        component={RestaurantDetailScreen}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookingWebView"
+        component={BookingWebView}
+        options={{ 
+          headerShown: false,
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
+        }}
       />
     </Stack.Navigator>
   );
@@ -325,13 +341,31 @@ export default function AppTabs() {
       <Tab.Screen
         name="BookingsTab"
         component={BookingsStack}
-        options={{
-          title: '',
-          tabBarIcon: ({ focused }) => (
-            <IconWrapper focused={focused} isDark={isDark}>
-              <ChecklistIcon color={focused ? (isDark ? colors.primary.white : colors.primary.black) : (isDark ? colors.primary.black : colors.text.inverse)} />
-            </IconWrapper>
-          ),
+        options={({ route }) => {
+          const routeName = getFocusedRouteNameFromRoute(route) ?? 'Bookings';
+          return {
+            title: '',
+            tabBarStyle: {
+              ...(routeName === 'RestaurantDetail' || routeName === 'BookingWebView'
+                ? { display: 'none' }
+                : {
+                    backgroundColor: isDark ? colors.primary.white : colors.primary.black,
+                    borderTopWidth: 0,
+                    height: 70,
+                    paddingBottom: 10,
+                    paddingTop: 10,
+                    borderRadius: 35,
+                    marginHorizontal: 30,
+                    marginBottom: 15,
+                    position: 'absolute',
+                  }),
+            },
+            tabBarIcon: ({ focused }) => (
+              <IconWrapper focused={focused} isDark={isDark}>
+                <ChecklistIcon color={focused ? (isDark ? colors.primary.white : colors.primary.black) : (isDark ? colors.primary.black : colors.text.inverse)} />
+              </IconWrapper>
+            ),
+          };
         }}
       />
       <Tab.Screen

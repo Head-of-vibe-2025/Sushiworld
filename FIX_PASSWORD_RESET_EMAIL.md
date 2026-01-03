@@ -150,3 +150,4 @@ If emails still don't arrive after setting up SMTP:
 
 Once SMTP is configured, password reset emails should work immediately! 🎉
 
+

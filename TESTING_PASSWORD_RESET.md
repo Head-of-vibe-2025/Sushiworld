@@ -74,3 +74,4 @@ These are for testing only, not production.
 4. Check spam folder
 5. If logs show success but no email, then SMTP setup is needed
 
+
